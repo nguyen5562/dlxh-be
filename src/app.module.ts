@@ -1,10 +1,11 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './modules/auth/auth.module';
-import { LoggerMiddleware } from './middleware/logger.middleware';
 import { LoggerModule } from './logger/logger.module';
+import { UserModule } from './modules/user/user.module';
+import { RoleModule } from './modules/role/role.module';
+import { PermissionModule } from './modules/permission/permission.module';
+import { RolePermissionModule } from './modules/role_permission/role_permission.module';
 
 @Module({
   imports: [
@@ -18,25 +19,13 @@ import { LoggerModule } from './logger/logger.module';
           throw new Error('MONGO_URI environment variable is not set');
         })(),
     ),
-    // MongooseModule.forFeature([
-    //   {
-    //     name: 'User',
-    //     schema: {
-    //       email: { type: String, required: true, unique: true },
-    //       hashed_password: { type: String, required: true },
-    //       name: { type: String, required: true },
-    //     },
-    //   },
-    // ]),
     LoggerModule,
     UserModule,
-    AuthModule,
+    RoleModule,
+    PermissionModule,
+    RolePermissionModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

@@ -8,17 +8,23 @@ export class User {
   @Prop({ type: Types.ObjectId, auto: true })
   _id: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Role' })
+  ma_nhom: Types.ObjectId;
+
   @Prop({ required: true, unique: true })
+  ten_dang_nhap: string;
+
+  @Prop({ required: true })
+  mat_khau: string;
+
+  @Prop()
+  ten_nguoi_dung: string;
+
+  @Prop()
   email: string;
 
-  @Prop({ required: true })
-  hashed_password: string;
-
-  @Prop({ required: true })
-  name: string;
-
-  @Prop({ required: true, default: 'user' })
-  role: string;
+  @Prop()
+  so_dien_thoai: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

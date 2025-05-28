@@ -12,14 +12,13 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+    const hashedPassword = await bcrypt.hash(createUserDto.mat_khau, salt);
 
-    const newUser = new this.userModel({
+    const newUser = await this.userModel.create({
       ...createUserDto,
-      hashed_password: hashedPassword,
-      role: 'user', // Default role
+      mat_khau: hashedPassword,
     });
-    return newUser.save();
+    return newUser;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
@@ -27,9 +26,7 @@ export class UserService {
       new: true,
     });
 
-    if (!updated) {
-      throw new NotFoundException('User not found');
-    }
+    if (!updated) throw new NotFoundException(`User not found`);
     return updated;
   }
 
@@ -48,17 +45,19 @@ export class UserService {
 
   async findUserById(id: string): Promise<User> {
     const user = await this.userModel.findById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException(`User not found`);
+    return user;
+  }
+
+  async findUserByUsername(username: string): Promise<User> {
+    const user = await this.userModel.findOne({ ten_dang_nhap: username });
+    if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
 
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
 }
