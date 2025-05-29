@@ -1,29 +1,25 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { NguoiDungModule } from './modules/nguoi-dung/nguoi-dung.module';
+import { VaiTroModule } from './modules/vai-tro/vai-tro.module';
+import { QuyenModule } from './modules/quyen/quyen.module';
+import { VaiTroQuyenModule } from './modules/vai-tro-quyen/vai-tro-quyen.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { databaseConfig } from './configs/env.config';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from './logger/logger.module';
-import { UserModule } from './modules/user/user.module';
-import { RoleModule } from './modules/role/role.module';
-import { PermissionModule } from './modules/permission/permission.module';
-import { RolePermissionModule } from './modules/role_permission/role_permission.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
       envFilePath: '.env',
+      isGlobal: true,
     }),
-    MongooseModule.forRoot(
-      process.env.MONGO_URI ??
-        (() => {
-          throw new Error('MONGO_URI environment variable is not set');
-        })(),
-    ),
-    LoggerModule,
-    UserModule,
-    RoleModule,
-    PermissionModule,
-    RolePermissionModule,
+    MongooseModule.forRoot(databaseConfig.uri),
+    AuthModule,
+    NguoiDungModule,
+    VaiTroModule,
+    QuyenModule,
+    VaiTroQuyenModule,
   ],
   controllers: [],
   providers: [],
