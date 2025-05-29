@@ -8,14 +8,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChucNangHeThong } from '../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../enums/quyen-he-thong.enum';
 import { NguoiDungService } from '../modules/nguoi-dung/nguoi-dung.service';
-import { VaiTroService } from '../modules/vai-tro/vai-tro.service';
 
 @Injectable()
 export class PermissionsGuard extends AuthGuard('jwt') {
   constructor(
     private readonly reflector: Reflector,
     private readonly nguoiDungService: NguoiDungService,
-    private readonly vaiTroService: VaiTroService,
   ) {
     super();
   }
@@ -45,7 +43,7 @@ export class PermissionsGuard extends AuthGuard('jwt') {
 
     if (!module || !actions) return true;
 
-    const result = await this.vaiTroService.checkQuyen(
+    const result = await this.nguoiDungService.checkQuyen(
       nguoiDung._id.toString(),
       module,
       actions,

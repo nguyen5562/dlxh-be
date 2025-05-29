@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { VaiTro, VaiTroSchema } from './schema/vai-tro.schema';
 import { VaiTroService } from './vai-tro.service';
@@ -9,7 +9,7 @@ import { VaiTroQuyenModule } from '../vai-tro-quyen/vai-tro-quyen.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: VaiTro.name, schema: VaiTroSchema }]),
-    NguoiDungModule,
+    forwardRef(() => NguoiDungModule),
     VaiTroQuyenModule,
   ],
   controllers: [VaiTroController],

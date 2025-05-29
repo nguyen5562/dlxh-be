@@ -75,6 +75,16 @@ export class VaiTroQuyenService {
     await this.vaiTroQuyenModel.insertMany(vaiTroQuyens);
   }
 
+  async removeQuyensFromVaiTro(
+    vaiTroId: string,
+    quyenIds: string[],
+  ): Promise<any> {
+    await this.vaiTroQuyenModel.deleteMany({
+      ma_vai_tro: new Types.ObjectId(vaiTroId),
+      ma_quyen: { $in: quyenIds.map((quyenId) => new Types.ObjectId(quyenId)) },
+    });
+  }
+
   async getQuyensByVaiTroId(vaiTroId: string): Promise<Quyen[]> {
     const vaiTroQuyens = await this.vaiTroQuyenModel.find({
       ma_vai_tro: new Types.ObjectId(vaiTroId),

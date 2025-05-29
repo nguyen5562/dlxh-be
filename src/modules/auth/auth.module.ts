@@ -7,7 +7,6 @@ import { appConfig } from '../../configs/env.config';
 import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { LocalStrategy } from '../../strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { VaiTroModule } from '../vai-tro/vai-tro.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { VaiTroModule } from '../vai-tro/vai-tro.module';
     }),
     PassportModule,
     NguoiDungModule,
-    VaiTroModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy],

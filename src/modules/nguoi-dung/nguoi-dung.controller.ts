@@ -62,4 +62,14 @@ export class NguoiDungController {
   async xoaVaiTroChoNguoiDung(@Param('userId') userId: string) {
     return await this.nguoiDungService.xoaVaiTroChoNguoiDung(userId);
   }
+
+  @Get('quyens/:userId')
+  async getQuyensByNguoiDungId(@Param('userId') userId: string) {
+    return await this.nguoiDungService.getQuyensByNguoiDungId(userId);
+  }
+
+  @Get('vai-tro/:userId')
+  async getVaiTroByNguoiDungId(@Param('userId') userId: string) {
+    return await this.nguoiDungService.getVaiTroByNguoiDungId(userId);
+  }
 }

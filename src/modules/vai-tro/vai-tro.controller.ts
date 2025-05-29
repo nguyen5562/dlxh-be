@@ -12,6 +12,7 @@ import { UpdateVaiTroDto } from './dto/update-vai-tro.dto';
 import { VaiTroService } from './vai-tro.service';
 import { CreateVaiTroDto } from './dto/create-vai-tro.dto';
 import { AddQuyenToVaiTroDto } from './dto/add-quyen-to-vai-tro.dto';
+import { RemoveQuyenFromVaiTroDto } from './dto/remove-quyen-from-vai-tro.dto';
 
 @Controller('vai-tro')
 export class VaiTroController {
@@ -53,13 +54,19 @@ export class VaiTroController {
     return await this.vaiTroService.addQuyensToVaiTro(id, addQuyensToVaiTroDto);
   }
 
+  @Post('remove-quyens/:id')
+  async removeQuyensFromVaiTro(
+    @Param('id') id: string,
+    @Body(ValidationPipe) removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDto,
+  ) {
+    return await this.vaiTroService.removeQuyensFromVaiTro(
+      id,
+      removeQuyensFromVaiTroDto,
+    );
+  }
+
   @Get('quyens/:id')
   async getQuyensByVaiTroId(@Param('id') id: string) {
     return await this.vaiTroService.getQuyensByVaiTroId(id);
-  }
-
-  @Get('quyens-nguoi-dung/:id')
-  async getQuyensByNguoiDungId(@Param('id') id: string) {
-    return await this.vaiTroService.getQuyensByNguoiDungId(id);
   }
 }

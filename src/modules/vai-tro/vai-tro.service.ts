@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { VaiTro, VaiTroDocument } from './schema/vai-tro.schema';
 import { Model } from 'mongoose';
@@ -8,15 +13,17 @@ import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 import { VaiTroQuyenService } from '../vai-tro-quyen/vai-tro-quyen.service';
 import { AddQuyenToVaiTroDto } from './dto/add-quyen-to-vai-tro.dto';
 import { Quyen } from '../quyen/schema/quyen.schema';
-import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
-import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { RemoveQuyenFromVaiTroDto } from './dto/remove-quyen-from-vai-tro.dto';
 
 @Injectable()
 export class VaiTroService {
   constructor(
     @InjectModel(VaiTro.name)
     private readonly vaiTroModel: Model<VaiTroDocument>,
+
+    @Inject(forwardRef(() => NguoiDungService))
     private readonly nguoiDungService: NguoiDungService,
+
     private readonly vaiTroQuyenService: VaiTroQuyenService,
   ) {}
 
@@ -84,42 +91,32 @@ export class VaiTroService {
     };
   }
 
+  async removeQuyensFromVaiTro(
+    id: string,
+    removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDto,
+  ): Promise<any> {
+    const vaiTro = await this.vaiTroModel.findById(id);
+    if (!vaiTro) throw new NotFoundException(`VaiTro not found`);
+
+    await this.vaiTroQuyenService.removeQuyensFromVaiTro(
+      id,
+      removeQuyensFromVaiTroDto.quyen_ids,
+    );
+
+    return {
+      message: 'Quyền đã được xóa khỏi vai trò',
+      statusCode: 200,
+    };
+  }
+
   async getQuyensByVaiTroId(id: string): Promise<Quyen[]> {
     const vaiTro = await this.vaiTroModel.findById(id);
     if (!vaiTro) throw new NotFoundException(`Not found`);
 
     const quyens = await this.vaiTroQuyenService.getQuyensByVaiTroId(id);
+    if (quyens.length === 0)
+      throw new NotFoundException(`Vai trò không có quyền`);
+
     return quyens;
-  }
-
-  async getQuyensByNguoiDungId(id: string): Promise<Quyen[]> {
-    const nguoiDung = await this.nguoiDungService.getNguoiDungById(id);
-    if (!nguoiDung) throw new NotFoundException(`NguoiDung not found`);
-
-    if (!nguoiDung.ma_vai_tro) return [];
-
-    const quyens = await this.vaiTroQuyenService.getQuyensByVaiTroId(
-      nguoiDung.ma_vai_tro.toString(),
-    );
-    return quyens;
-  }
-
-  async checkQuyen(
-    userId: string,
-    module: ChucNangHeThong,
-    actions: QuyenHeThong[],
-  ) {
-    const quyens = await this.getQuyensByNguoiDungId(userId);
-
-    for (let index = 0; index < quyens.length; index++) {
-      const quyen = quyens[index];
-      if (
-        (quyen.chuc_nang as ChucNangHeThong) === module &&
-        actions.includes(quyen.quyen as QuyenHeThong)
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }
