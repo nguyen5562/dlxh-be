@@ -7,6 +7,8 @@ import { VaiTroQuyenModule } from './modules/vai-tro-quyen/vai-tro-quyen.module'
 import { AuthModule } from './modules/auth/auth.module';
 import { databaseConfig } from './configs/env.config';
 import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
     QuyenModule,
     VaiTroQuyenModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
