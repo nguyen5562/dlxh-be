@@ -77,7 +77,7 @@ export class NguoiDungService {
 
   async getNguoiDungByTenDangNhap(ten_dang_nhap: string): Promise<NguoiDung> {
     const user = await this.nguoiDungModel.findOne({ ten_dang_nhap });
-    if (!user) throw new NotFoundException(`User not found`);
+    if (!user) throw new NotFoundException(`Người dùng này không tồn tại`);
     return user;
   }
 

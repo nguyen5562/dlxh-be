@@ -1,6 +1,6 @@
-export const ApiResponse = (res, status, code, message, data) => {
+export const ApiResponse = (res, code, message, data) => {
   const ans = {
-    input_correct: status,
+    status: 'Success',
     statusCode: code,
     message: message,
     data: data,

@@ -2,38 +2,39 @@ import { Controller, Get, Request, Response, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Post } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
-import { PermissionsGuard } from '../../guards/permissions.guard';
-import {
-  ModulePermission,
-  ActionsPermission,
-} from '../../decorators/module-action.decorator';
-import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
-import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ApiResponse } from '../../helper/response.helper';
-import { ResponseCode, ResponseMessage } from '../../const/response.const';
+import { ResponseCode } from '../../const/response.const';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly nguoiDungService: NguoiDungService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Response() res) {
     const ans = await this.authService.login(req.user);
-    return ApiResponse(
-      res,
-      true,
-      ResponseCode.SUCCESS,
-      ResponseMessage.SUCCESS,
-      ans,
-    );
+    return ApiResponse(res, ResponseCode.SUCCESS, 'Đăng nhập thành công', ans);
   }
 
-  @UseGuards(PermissionsGuard)
-  @ModulePermission(ChucNangHeThong.PhanQuyen)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req, @Response() res) {
+    const userId = req.user.userId;
+    const vaitro = await this.nguoiDungService.getVaiTroByNguoiDungId(userId);
+    const quyens = await this.nguoiDungService.getQuyensByNguoiDungId(userId);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy quyền của người dùng hiện tại thành công',
+      {
+        role: vaitro,
+        permissions: quyens,
+      },
+    );
   }
 }
