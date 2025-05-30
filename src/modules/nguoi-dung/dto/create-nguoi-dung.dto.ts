@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateNguoiDungDto {
   @IsString()
@@ -26,8 +20,4 @@ export class CreateNguoiDungDto {
   @IsString()
   @IsOptional()
   sdt: string;
-
-  @IsMongoId()
-  @IsOptional()
-  ma_vai_tro: string;
 }
