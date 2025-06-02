@@ -4,7 +4,7 @@ import { Post } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 
 @Controller('auth')
@@ -25,15 +25,16 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req, @Response() res) {
     const userId = req.user.userId;
-    const vaitro = await this.nguoiDungService.getVaiTroByNguoiDungId(userId);
-    const quyens = await this.nguoiDungService.getQuyensByNguoiDungId(userId);
+    const result =
+      await this.nguoiDungService.getVaiTroAndQuyensByNguoiDungId(userId);
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy quyền của người dùng hiện tại thành công',
       {
-        role: vaitro,
-        permissions: quyens,
+        role: result.vaiTro,
+        permissions: result.quyens,
       },
     );
   }

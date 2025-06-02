@@ -1,0 +1,144 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { VungMien, VungMienDocument } from './schema/vung-mien.schema';
+import { CreateVungMienDto } from './dto/create-vung-mien.dto';
+import { UpdateVungMienDto } from './dto/update-vung-mien.dto';
+
+@Injectable()
+export class VungMienService {
+  constructor(
+    @InjectModel(VungMien.name)
+    private readonly vungMienModel: Model<VungMienDocument>,
+  ) {}
+
+  async createVungMien(
+    createVungMienDto: CreateVungMienDto,
+  ): Promise<VungMien> {
+    if (createVungMienDto.ma_vung_mien_cha) {
+      const vungMienCha = await this.vungMienModel.findById(
+        createVungMienDto.ma_vung_mien_cha,
+      );
+      if (!vungMienCha)
+        throw new NotFoundException('Vùng miền cha không tồn tại');
+
+      createVungMienDto.ma_phan_cap = `${vungMienCha.ma_phan_cap}.${vungMienCha._id.toString()}`;
+    } else {
+      createVungMienDto.ma_phan_cap = '0';
+    }
+
+    const vungMien = await this.vungMienModel.create(createVungMienDto);
+    return vungMien;
+  }
+
+  async updateVungMien(
+    id: string,
+    updateVungMienDto: UpdateVungMienDto,
+  ): Promise<VungMien> {
+    const vungMien = await this.vungMienModel.findByIdAndUpdate(
+      id,
+      updateVungMienDto,
+      {
+        new: true,
+      },
+    );
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+    return vungMien;
+  }
+
+  async updateVungMienPhanCap(
+    id: string,
+    ma_vung_mien_cha: string,
+  ): Promise<VungMien> {
+    const vungMien = await this.vungMienModel.findById(id);
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+
+    const vungMienCha = await this.vungMienModel.findById(ma_vung_mien_cha);
+    if (!vungMienCha)
+      throw new NotFoundException('Vùng miền cha không tồn tại');
+
+    // Cập nhật mã phân cấp cho vùng miền hiện tại
+    const newMaPhanCap = `${vungMienCha.ma_phan_cap}.${vungMienCha._id.toString()}`;
+
+    // Cập nhật mã phân cấp cho tất cả vùng miền con
+    const oldMaPhanCap = vungMien.ma_phan_cap;
+    const regex = new RegExp(`^${oldMaPhanCap}(\\.|$)`);
+    const vungMienCons = await this.vungMienModel.find({ ma_phan_cap: regex });
+
+    // Cập nhật từng vùng miền con
+    for (const vungMienCon of vungMienCons) {
+      const newMaPhanCapCon = vungMienCon.ma_phan_cap.replace(
+        oldMaPhanCap,
+        newMaPhanCap,
+      );
+      await this.vungMienModel.findByIdAndUpdate(vungMienCon._id, {
+        ma_phan_cap: newMaPhanCapCon,
+      });
+    }
+
+    // Cập nhật vùng miền hiện tại
+    const updatedVungMien = await this.vungMienModel.findByIdAndUpdate(
+      id,
+      {
+        ma_phan_cap: newMaPhanCap,
+        ma_vung_mien_cha: vungMienCha._id,
+      },
+      { new: true },
+    );
+
+    if (!updatedVungMien)
+      throw new NotFoundException('Vùng miền không tồn tại');
+    return updatedVungMien;
+  }
+
+  async deleteVungMien(id: string): Promise<void> {
+    const vungMien = await this.vungMienModel.findById(id);
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+
+    // Xóa tất cả vùng miền con
+    await this.vungMienModel.deleteMany({
+      ma_phan_cap: { $regex: `^${vungMien.ma_phan_cap}\\.` },
+    });
+
+    // Xóa vùng miền hiện tại
+    await this.vungMienModel.findByIdAndDelete(id);
+  }
+
+  async getAllVungMiens(): Promise<VungMien[]> {
+    return await this.vungMienModel
+      .find()
+      .populate('ma_vung_mien_cha', '_id ten_vung_mien');
+  }
+
+  async getVungMienById(id: string): Promise<VungMien> {
+    const vungMien = await this.vungMienModel
+      .findById(id)
+      .populate('ma_vung_mien_cha', '_id ten_vung_mien');
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+    return vungMien;
+  }
+
+  async getVungMienByMaPhanCap(ma_phan_cap: string): Promise<VungMien> {
+    const vungMien = await this.vungMienModel.findOne({ ma_phan_cap });
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+    return vungMien;
+  }
+
+  async getVungMienCon(id: string): Promise<VungMien[]> {
+    const vungMien = await this.vungMienModel.findById(id);
+    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
+    const ma_phan_cap = vungMien.ma_phan_cap;
+    return await this.vungMienModel.find({
+      ma_phan_cap: { $regex: `^${ma_phan_cap}\\.` },
+    });
+  }
+
+  async getVungMienGoc(): Promise<VungMien[]> {
+    return await this.vungMienModel.find({ ma_phan_cap: '0' });
+  }
+
+  async getVungMienTheoCap(level: number): Promise<VungMien[]> {
+    const regex = new RegExp(`^[0-9]+(\\.\\w+){${level - 1}}$`);
+    return await this.vungMienModel.find({ ma_phan_cap: regex });
+  }
+}

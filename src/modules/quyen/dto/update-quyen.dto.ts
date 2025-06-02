@@ -1,5 +1,5 @@
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { ChucNangSystem, QuyenSystem } from 'src/const/quyen.const';
+import { ChucNangSystem, QuyenSystem } from '../../../const/quyen.const';
 
 export class UpdateQuyenDto {
   @IsString()

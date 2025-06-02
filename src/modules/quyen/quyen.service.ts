@@ -32,13 +32,9 @@ export class QuyenService {
     return updated;
   }
 
-  async deleteQuyen(id: string): Promise<any> {
+  async deleteQuyen(id: string): Promise<void> {
     const result = await this.quyenModel.findByIdAndDelete(id);
     if (!result) throw new NotFoundException(`Quyen not found`);
-    return {
-      message: 'Quyen deleted successfully',
-      statusCode: 200,
-    };
   }
 
   async findAllQuyens(): Promise<Quyen[]> {

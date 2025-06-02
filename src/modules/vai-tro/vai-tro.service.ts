@@ -47,7 +47,7 @@ export class VaiTroService {
     return updated;
   }
 
-  async deleteVaiTro(id: string): Promise<any> {
+  async deleteVaiTro(id: string): Promise<void> {
     // Xóa tất cả vai trò của người dùng có vai trò này
     await this.nguoiDungService.xoaVaiTroChoNguoiDungByVaiTroId(id);
 
@@ -57,10 +57,6 @@ export class VaiTroService {
     // Xóa vai trò
     const result = await this.vaiTroModel.findByIdAndDelete(id);
     if (!result) throw new NotFoundException(`VaiTro not found`);
-    return {
-      message: 'VaiTro deleted successfully',
-      statusCode: 200,
-    };
   }
 
   async getAllVaiTros(): Promise<VaiTro[]> {
@@ -76,7 +72,7 @@ export class VaiTroService {
   async addQuyensToVaiTro(
     id: string,
     addQuyensToVaiTroDto: AddQuyenToVaiTroDto,
-  ): Promise<any> {
+  ): Promise<void> {
     const vaiTro = await this.vaiTroModel.findById(id);
     if (!vaiTro) throw new NotFoundException(`VaiTro not found`);
 
@@ -84,17 +80,12 @@ export class VaiTroService {
       id,
       addQuyensToVaiTroDto.quyen_ids,
     );
-
-    return {
-      message: 'Quyền đã được thêm vào vai trò',
-      statusCode: 200,
-    };
   }
 
   async removeQuyensFromVaiTro(
     id: string,
     removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDto,
-  ): Promise<any> {
+  ): Promise<void> {
     const vaiTro = await this.vaiTroModel.findById(id);
     if (!vaiTro) throw new NotFoundException(`VaiTro not found`);
 
@@ -102,21 +93,12 @@ export class VaiTroService {
       id,
       removeQuyensFromVaiTroDto.quyen_ids,
     );
-
-    return {
-      message: 'Quyền đã được xóa khỏi vai trò',
-      statusCode: 200,
-    };
   }
 
   async getQuyensByVaiTroId(id: string): Promise<Quyen[]> {
     const vaiTro = await this.vaiTroModel.findById(id);
-    if (!vaiTro) throw new NotFoundException(`Not found`);
+    if (!vaiTro) throw new NotFoundException(`Không tìm thấy vai trò`);
 
-    const quyens = await this.vaiTroQuyenService.getQuyensByVaiTroId(id);
-    if (quyens.length === 0)
-      throw new NotFoundException(`Vai trò không có quyền`);
-
-    return quyens;
+    return await this.vaiTroQuyenService.getQuyensByVaiTroId(id);
   }
 }

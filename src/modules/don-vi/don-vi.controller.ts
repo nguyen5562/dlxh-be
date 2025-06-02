@@ -1,0 +1,100 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
+import { DonViService } from './don-vi.service';
+import { ApiResponse } from '../../helper/response.helper';
+import { ResponseCode } from '../../const/response.const';
+import { CreateDonViDto } from './dto/create-don-vi.dto';
+import { UpdateDonViDto } from './dto/update-don-vi.dto';
+import { PermissionsGuard } from '../../guards/permissions.guard';
+import {
+  ModulePermission,
+  ActionsPermission,
+} from '../../decorators/module-action.decorator';
+import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+
+@UseGuards(PermissionsGuard)
+@Controller('don-vi')
+export class DonViController {
+  constructor(private readonly donViService: DonViService) {}
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get()
+  async getAllDonVis(@Response() res) {
+    const ans = await this.donViService.getAllDonVis();
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy danh sách đơn vị thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get(':id')
+  async getDonViById(@Param('id') id: string, @Response() res) {
+    const ans = await this.donViService.getDonViById(id);
+    return ApiResponse(res, ResponseCode.SUCCESS, 'Lấy đơn vị thành công', ans);
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.Edit])
+  @Post()
+  async createDonVi(@Body() createDonViDto: CreateDonViDto, @Response() res) {
+    const ans = await this.donViService.createDonVi(createDonViDto);
+    return ApiResponse(res, ResponseCode.CREATED, 'Tạo đơn vị thành công', ans);
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.Edit])
+  @Put(':id')
+  async updateDonVi(
+    @Param('id') id: string,
+    @Body() updateDonViDto: UpdateDonViDto,
+    @Response() res,
+  ) {
+    const ans = await this.donViService.updateDonVi(id, updateDonViDto);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Cập nhật đơn vị thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.Edit])
+  @Put(':id/phan-cap')
+  async updateDonViPhanCap(
+    @Param('id') id: string,
+    @Body('ma_don_vi_cha') ma_don_vi_cha: string,
+    @Response() res,
+  ) {
+    const ans = await this.donViService.updateDonViPhanCap(id, ma_don_vi_cha);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Cập nhật phân cấp đơn vị thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  @ActionsPermission([QuyenHeThong.Edit])
+  @Delete(':id')
+  async deleteDonVi(@Param('id') id: string, @Response() res) {
+    await this.donViService.deleteDonVi(id);
+    return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa đơn vị thành công');
+  }
+}

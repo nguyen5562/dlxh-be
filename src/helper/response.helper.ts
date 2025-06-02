@@ -1,9 +1,9 @@
-export const ApiResponse = (res, code, message, data) => {
+export const ApiResponse = (res, code, message, data?) => {
   const ans = {
     status: 'Success',
     statusCode: code,
     message: message,
-    data: data,
+    ...(data && { data }),
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call

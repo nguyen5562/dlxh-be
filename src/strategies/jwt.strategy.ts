@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../interface/jwt-payload.interface';
-import { appConfig } from 'src/configs/env.config';
+import { appConfig } from '../configs/env.config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   validate(payload: JwtPayload) {
     if (!payload.sub || !payload.ten_nguoi_dung) {
-      throw new UnauthorizedException('Invalid token payload');
+      throw new UnauthorizedException('Token không hợp lệ');
     }
 
     return {

@@ -12,9 +12,10 @@ import { UpdateNguoiDungDto } from './dto/update-nguoi-dung.dto';
 import * as bcrypt from 'bcrypt';
 import { VaiTroService } from '../vai-tro/vai-tro.service';
 import { Quyen } from '../quyen/schema/quyen.schema';
-import { ChucNangHeThong } from 'src/enums/chuc-nang-he-thong.enum';
-import { QuyenHeThong } from 'src/enums/quyen-he-thong.enum';
+import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { VaiTro } from '../vai-tro/schema/vai-tro.schema';
+import { NguoiDungDTO } from './dto/nguoi-dung.dto';
 
 @Injectable()
 export class NguoiDungService {
@@ -56,23 +57,47 @@ export class NguoiDungService {
     return updated;
   }
 
-  async deleteNguoiDung(id: string): Promise<any> {
+  async deleteNguoiDung(id: string): Promise<void> {
     const result = await this.nguoiDungModel.findByIdAndDelete(id);
     if (!result) throw new NotFoundException(`User not found`);
-    return {
-      message: 'User deleted successfully',
-      statusCode: 200,
-    };
   }
 
   async getAllNguoiDungs(): Promise<NguoiDung[]> {
     return await this.nguoiDungModel.find();
   }
 
+  async getAllNguoiDungsAndVaiTroAndQuyens(): Promise<NguoiDungDTO[]> {
+    const users = await this.nguoiDungModel.find();
+    const userDTOs = Promise.all(
+      users.map(async (user) => {
+        const result = await this.getVaiTroAndQuyensByNguoiDungId(
+          user._id.toString(),
+        );
+        return {
+          ...user.toObject(),
+          role: result.vaiTro,
+          permissions: result.quyens,
+        };
+      }),
+    );
+    return userDTOs;
+  }
+
   async getNguoiDungById(id: string): Promise<NguoiDung> {
     const user = await this.nguoiDungModel.findById(id);
-    if (!user) throw new NotFoundException(`User not found`);
+    if (!user) throw new NotFoundException(`Không tìm thấy người dùng này`);
     return user;
+  }
+
+  async getNguoiDungAndVaiTroAndQuyensById(id: string): Promise<NguoiDungDTO> {
+    const user = await this.nguoiDungModel.findById(id);
+    if (!user) throw new NotFoundException(`User not found`);
+    const result = await this.getVaiTroAndQuyensByNguoiDungId(id);
+    return {
+      ...user.toObject(),
+      role: result.vaiTro,
+      permissions: result.quyens,
+    };
   }
 
   async getNguoiDungByTenDangNhap(ten_dang_nhap: string): Promise<NguoiDung> {
@@ -116,22 +141,54 @@ export class NguoiDungService {
 
   async getVaiTroByNguoiDungId(userId: string): Promise<VaiTro> {
     const nguoiDung = await this.getNguoiDungById(userId);
-    if (!nguoiDung) throw new NotFoundException(`User not found`);
+    if (!nguoiDung) throw new NotFoundException(`Không tìm thấy người dùng`);
+    if (!nguoiDung.ma_vai_tro)
+      throw new NotFoundException(`Người dùng này không có vai trò`);
     return this.vaiTroService.getVaiTroById(nguoiDung.ma_vai_tro.toString());
   }
 
   async getQuyensByNguoiDungId(userId: string): Promise<Quyen[]> {
-    const nguoiDung = await this.getNguoiDungById(userId);
-    if (!nguoiDung) throw new NotFoundException(`User not found`);
-
-    if (!nguoiDung.ma_vai_tro)
-      throw new NotFoundException(`User not have role`);
+    const vaiTro = await this.getVaiTroByNguoiDungId(userId);
+    if (!vaiTro) throw new NotFoundException(`Không tìm thấy vai trò`);
 
     const quyens = await this.vaiTroService.getQuyensByVaiTroId(
-      nguoiDung.ma_vai_tro.toString(),
+      vaiTro._id.toString(),
     );
 
     return quyens;
+  }
+
+  async getVaiTroAndQuyensByNguoiDungId(userId: string): Promise<any> {
+    const nguoiDung = await this.getNguoiDungById(userId);
+    if (!nguoiDung) throw new NotFoundException(`Không tìm thấy người dùng`);
+    if (!nguoiDung.ma_vai_tro)
+      return {
+        vaiTro: null,
+        quyens: [],
+      };
+
+    const _vaiTro = await this.vaiTroService.getVaiTroById(
+      nguoiDung.ma_vai_tro.toString(),
+    );
+    if (!_vaiTro)
+      return {
+        vaiTro: null,
+        quyens: [],
+      };
+
+    const _quyens = await this.vaiTroService.getQuyensByVaiTroId(
+      _vaiTro._id.toString(),
+    );
+    if (!_quyens)
+      return {
+        vaiTro: _vaiTro,
+        quyens: [],
+      };
+
+    return {
+      vaiTro: _vaiTro,
+      quyens: _quyens,
+    };
   }
 
   async checkQuyen(
@@ -139,10 +196,11 @@ export class NguoiDungService {
     module: ChucNangHeThong,
     actions: QuyenHeThong[],
   ) {
-    const quyens = await this.getQuyensByNguoiDungId(userId);
+    const result = await this.getVaiTroAndQuyensByNguoiDungId(userId);
+    if (!result.quyens || result.quyens.length === 0) return false;
 
-    for (let index = 0; index < quyens.length; index++) {
-      const quyen = quyens[index];
+    for (let index = 0; index < result.quyens.length; index++) {
+      const quyen = result.quyens[index];
       if (
         (quyen.chuc_nang as ChucNangHeThong) === module &&
         actions.includes(quyen.quyen as QuyenHeThong)

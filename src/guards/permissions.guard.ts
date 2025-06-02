@@ -8,6 +8,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ChucNangHeThong } from '../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../enums/quyen-he-thong.enum';
 import { NguoiDungService } from '../modules/nguoi-dung/nguoi-dung.service';
+import { ResponseMessage } from '../const/response.const';
 
 @Injectable()
 export class PermissionsGuard extends AuthGuard('jwt') {
@@ -22,7 +23,7 @@ export class PermissionsGuard extends AuthGuard('jwt') {
     const passportActive = await super.canActivate(context);
 
     if (!passportActive) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(ResponseMessage.UNAUTHORIZED);
     }
 
     const module: ChucNangHeThong = this.reflector.get<ChucNangHeThong>(

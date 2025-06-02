@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  Request,
+  Response,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,6 +22,8 @@ import {
 } from '../../decorators/module-action.decorator';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { ResponseCode } from '../../const/response.const';
+import { ApiResponse } from '../../helper/response.helper';
 
 @UseGuards(PermissionsGuard)
 @Controller('nguoi-dung')
@@ -29,15 +33,41 @@ export class NguoiDungController {
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllNguoiDungs() {
-    return await this.nguoiDungService.getAllNguoiDungs();
+  async getAllNguoiDungs(@Response() res) {
+    const ans = await this.nguoiDungService.getAllNguoiDungs();
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy danh sách người dùng thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('details')
+  async getAllNguoiDungsAndVaiTroAndQuyens(@Response() res) {
+    const ans =
+      await this.nguoiDungService.getAllNguoiDungsAndVaiTroAndQuyens();
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy danh sách chi tiết người dùng và vai trò và quyền thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
-  async getNguoiDungById(@Param('id') id: string) {
-    return await this.nguoiDungService.getNguoiDungById(id);
+  async getNguoiDungById(@Param('id') id: string, @Response() res) {
+    const ans = await this.nguoiDungService.getNguoiDungById(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy người dùng thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
@@ -45,8 +75,15 @@ export class NguoiDungController {
   @Post()
   async createNguoiDung(
     @Body(ValidationPipe) createNguoiDungDto: CreateNguoiDungDto,
+    @Response() res,
   ) {
-    return await this.nguoiDungService.createNguoiDung(createNguoiDungDto);
+    const ans = await this.nguoiDungService.createNguoiDung(createNguoiDungDto);
+    return ApiResponse(
+      res,
+      ResponseCode.CREATED,
+      'Tạo người dùng thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
@@ -55,15 +92,26 @@ export class NguoiDungController {
   async updateNguoiDung(
     @Param('id') id: string,
     @Body(ValidationPipe) updateNguoiDungDto: UpdateNguoiDungDto,
+    @Response() res,
   ) {
-    return await this.nguoiDungService.updateNguoiDung(id, updateNguoiDungDto);
+    const ans = await this.nguoiDungService.updateNguoiDung(
+      id,
+      updateNguoiDungDto,
+    );
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Cập nhật người dùng thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
-  async deleteNguoiDung(@Param('id') id: string) {
-    return await this.nguoiDungService.deleteNguoiDung(id);
+  async deleteNguoiDung(@Param('id') id: string, @Response() res) {
+    await this.nguoiDungService.deleteNguoiDung(id);
+    return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa người dùng thành công');
   }
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
@@ -72,31 +120,68 @@ export class NguoiDungController {
   async ganVaiTroChoNguoiDung(
     @Param('userId') userId: string,
     @Body(ValidationPipe) assignRoleDto: AssignRoleDto,
+    @Response() res,
   ) {
-    return await this.nguoiDungService.ganVaiTroChoNguoiDung(
+    const ans = await this.nguoiDungService.ganVaiTroChoNguoiDung(
       userId,
       assignRoleDto.ma_vai_tro,
+    );
+
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Gán vai trò cho người dùng thành công',
+      ans,
     );
   }
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post('remove-role/:userId')
-  async xoaVaiTroChoNguoiDung(@Param('userId') userId: string) {
-    return await this.nguoiDungService.xoaVaiTroChoNguoiDung(userId);
+  async xoaVaiTroChoNguoiDung(
+    @Param('userId') userId: string,
+    @Response() res,
+  ) {
+    const ans = await this.nguoiDungService.xoaVaiTroChoNguoiDung(userId);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Xóa vai trò cho người dùng thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('quyens/:userId')
-  async getQuyensByNguoiDungId(@Param('userId') userId: string) {
-    return await this.nguoiDungService.getQuyensByNguoiDungId(userId);
+  async getQuyensByNguoiDungId(
+    @Param('userId') userId: string,
+    @Response() res,
+  ) {
+    const ans = await this.nguoiDungService.getQuyensByNguoiDungId(userId);
+
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy quyền cho người dùng thành công',
+      ans,
+    );
   }
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('vai-tro/:userId')
-  async getVaiTroByNguoiDungId(@Param('userId') userId: string) {
-    return await this.nguoiDungService.getVaiTroByNguoiDungId(userId);
+  async getVaiTroByNguoiDungId(
+    @Param('userId') userId: string,
+    @Response() res,
+  ) {
+    const ans = await this.nguoiDungService.getVaiTroByNguoiDungId(userId);
+
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy vai trò cho người dùng thành công',
+      ans,
+    );
   }
 }

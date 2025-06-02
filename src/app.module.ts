@@ -9,6 +9,8 @@ import { databaseConfig } from './configs/env.config';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { VungMienModule } from './modules/vung-mien/vung-mien.module';
+import { DonViModule } from './modules/don-vi/don-vi.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { AppService } from './app.service';
     VaiTroModule,
     QuyenModule,
     VaiTroQuyenModule,
+    VungMienModule,
+    DonViModule,
   ],
   controllers: [AppController],
   providers: [AppService],
