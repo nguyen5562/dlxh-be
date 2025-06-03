@@ -25,7 +25,7 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('vai-tro')
 export class VaiTroController {
   constructor(private readonly vaiTroService: VaiTroService) {}
