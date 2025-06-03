@@ -42,6 +42,9 @@ export class DonViService {
     id: string,
     updateDonViDto: UpdateDonViDto,
   ): Promise<DonVi> {
+    const donVi = await this.donViModel.findById(id);
+    if (!donVi) throw new NotFoundException('Đơn vị không tồn tại');
+
     if (updateDonViDto.ma_vung_mien) {
       const vungMien = await this.vungMienService.getVungMienById(
         updateDonViDto.ma_vung_mien,
@@ -49,49 +52,40 @@ export class DonViService {
       if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
     }
 
-    const donVi = await this.donViModel.findByIdAndUpdate(id, updateDonViDto, {
-      new: true,
-    });
-    if (!donVi) throw new NotFoundException('Đơn vị không tồn tại');
-    return donVi;
-  }
-
-  async updateDonViPhanCap(id: string, ma_don_vi_cha: string): Promise<DonVi> {
-    const donVi = await this.donViModel.findById(id);
-    if (!donVi) throw new NotFoundException('Đơn vị không tồn tại');
-
-    const donViCha = await this.donViModel.findById(ma_don_vi_cha);
-    if (!donViCha) throw new NotFoundException('Đơn vị cha không tồn tại');
-
-    // Cập nhật mã phân cấp cho đơn vị hiện tại
-    const newMaPhanCap = `${donViCha.ma_phan_cap}.${donViCha._id.toString()}`;
-
-    // Cập nhật mã phân cấp cho tất cả đơn vị con
-    const oldMaPhanCap = donVi.ma_phan_cap;
-    const regex = new RegExp(`^${oldMaPhanCap}(\\.|$)`);
-    const donViCons = await this.donViModel.find({ ma_phan_cap: regex });
-
-    // Cập nhật từng đơn vị con
-    for (const donViCon of donViCons) {
-      const newMaPhanCapCon = donViCon.ma_phan_cap.replace(
-        oldMaPhanCap,
-        newMaPhanCap,
+    if (updateDonViDto.ma_don_vi_cha) {
+      const donViCha = await this.donViModel.findById(
+        updateDonViDto.ma_don_vi_cha,
       );
-      await this.donViModel.findByIdAndUpdate(donViCon._id, {
-        ma_phan_cap: newMaPhanCapCon,
-      });
+      if (!donViCha) throw new NotFoundException('Đơn vị cha không tồn tại');
+
+      // Cập nhật mã phân cấp cho đơn vị hiện tại
+      const newMaPhanCap = `${donViCha.ma_phan_cap}.${donViCha._id.toString()}`;
+
+      // Cập nhật mã phân cấp cho tất cả đơn vị con
+      const oldMaPhanCap = donVi.ma_phan_cap;
+      const regex = new RegExp(`^${oldMaPhanCap}(\\.|$)`);
+      const donViCons = await this.donViModel.find({ ma_phan_cap: regex });
+
+      // Cập nhật từng đơn vị con
+      for (const donViCon of donViCons) {
+        const newMaPhanCapCon = donViCon.ma_phan_cap.replace(
+          oldMaPhanCap,
+          newMaPhanCap,
+        );
+        await this.donViModel.findByIdAndUpdate(donViCon._id, {
+          ma_phan_cap: newMaPhanCapCon,
+        });
+      }
+
+      updateDonViDto.ma_phan_cap = newMaPhanCap;
+      updateDonViDto.ma_don_vi_cha = donViCha._id.toString();
     }
 
-    // Cập nhật đơn vị hiện tại
     const updatedDonVi = await this.donViModel.findByIdAndUpdate(
       id,
-      {
-        ma_phan_cap: newMaPhanCap,
-        ma_don_vi_cha: donViCha._id,
-      },
+      updateDonViDto,
       { new: true },
     );
-
     if (!updatedDonVi) throw new NotFoundException('Đơn vị không tồn tại');
     return updatedDonVi;
   }

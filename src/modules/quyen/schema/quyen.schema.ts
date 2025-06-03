@@ -7,10 +7,10 @@ export type QuyenDocument = Quyen & Document;
 export class Quyen {
   _id: Types.ObjectId;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   chuc_nang: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   quyen: string;
 }
 

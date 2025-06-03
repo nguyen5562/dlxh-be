@@ -12,4 +12,12 @@ export class UpdateDonViDto {
   @IsMongoId()
   @IsOptional()
   ma_vung_mien?: string;
+
+  @IsMongoId()
+  @IsOptional()
+  ma_don_vi_cha?: string;
+
+  @IsString()
+  @IsOptional()
+  ma_phan_cap?: string;
 }

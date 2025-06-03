@@ -8,6 +8,7 @@ import {
   Put,
   Response,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { VungMienService } from './vung-mien.service';
 import { ApiResponse } from '../../helper/response.helper';
@@ -22,7 +23,7 @@ import {
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 
-@UseGuards(PermissionsGuard)
+// @UseGuards(PermissionsGuard)
 @Controller('vung-mien')
 export class VungMienController {
   constructor(private readonly vungMienService: VungMienService) {}
@@ -57,7 +58,7 @@ export class VungMienController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createVungMien(
-    @Body() createVungMienDto: CreateVungMienDto,
+    @Body(ValidationPipe) createVungMienDto: CreateVungMienDto,
     @Response() res,
   ) {
     const ans = await this.vungMienService.createVungMien(createVungMienDto);
@@ -74,7 +75,7 @@ export class VungMienController {
   @Put(':id')
   async updateVungMien(
     @Param('id') id: string,
-    @Body() updateVungMienDto: UpdateVungMienDto,
+    @Body(ValidationPipe) updateVungMienDto: UpdateVungMienDto,
     @Response() res,
   ) {
     const ans = await this.vungMienService.updateVungMien(
@@ -85,26 +86,6 @@ export class VungMienController {
       res,
       ResponseCode.SUCCESS,
       'Cập nhật vùng miền thành công',
-      ans,
-    );
-  }
-
-  @ModulePermission(ChucNangHeThong.QuanLyVungMien)
-  @ActionsPermission([QuyenHeThong.Edit])
-  @Put(':id/phan-cap')
-  async updateVungMienPhanCap(
-    @Param('id') id: string,
-    @Body('ma_vung_mien_cha') ma_vung_mien_cha: string,
-    @Response() res,
-  ) {
-    const ans = await this.vungMienService.updateVungMienPhanCap(
-      id,
-      ma_vung_mien_cha,
-    );
-    return ApiResponse(
-      res,
-      ResponseCode.SUCCESS,
-      'Cập nhật phân cấp vùng miền thành công',
       ans,
     );
   }

@@ -8,6 +8,7 @@ import {
   Put,
   Response,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { DonViService } from './don-vi.service';
 import { ApiResponse } from '../../helper/response.helper';
@@ -22,7 +23,7 @@ import {
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 
-@UseGuards(PermissionsGuard)
+// @UseGuards(PermissionsGuard)
 @Controller('don-vi')
 export class DonViController {
   constructor(private readonly donViService: DonViService) {}
@@ -51,7 +52,10 @@ export class DonViController {
   @ModulePermission(ChucNangHeThong.QuanLyDonVi)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
-  async createDonVi(@Body() createDonViDto: CreateDonViDto, @Response() res) {
+  async createDonVi(
+    @Body(ValidationPipe) createDonViDto: CreateDonViDto,
+    @Response() res,
+  ) {
     const ans = await this.donViService.createDonVi(createDonViDto);
     return ApiResponse(res, ResponseCode.CREATED, 'Tạo đơn vị thành công', ans);
   }
@@ -61,7 +65,7 @@ export class DonViController {
   @Put(':id')
   async updateDonVi(
     @Param('id') id: string,
-    @Body() updateDonViDto: UpdateDonViDto,
+    @Body(ValidationPipe) updateDonViDto: UpdateDonViDto,
     @Response() res,
   ) {
     const ans = await this.donViService.updateDonVi(id, updateDonViDto);
@@ -69,23 +73,6 @@ export class DonViController {
       res,
       ResponseCode.SUCCESS,
       'Cập nhật đơn vị thành công',
-      ans,
-    );
-  }
-
-  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
-  @ActionsPermission([QuyenHeThong.Edit])
-  @Put(':id/phan-cap')
-  async updateDonViPhanCap(
-    @Param('id') id: string,
-    @Body('ma_don_vi_cha') ma_don_vi_cha: string,
-    @Response() res,
-  ) {
-    const ans = await this.donViService.updateDonViPhanCap(id, ma_don_vi_cha);
-    return ApiResponse(
-      res,
-      ResponseCode.SUCCESS,
-      'Cập nhật phân cấp đơn vị thành công',
       ans,
     );
   }

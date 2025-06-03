@@ -35,54 +35,44 @@ export class VungMienService {
     id: string,
     updateVungMienDto: UpdateVungMienDto,
   ): Promise<VungMien> {
-    const vungMien = await this.vungMienModel.findByIdAndUpdate(
-      id,
-      updateVungMienDto,
-      {
-        new: true,
-      },
-    );
-    if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
-    return vungMien;
-  }
-
-  async updateVungMienPhanCap(
-    id: string,
-    ma_vung_mien_cha: string,
-  ): Promise<VungMien> {
     const vungMien = await this.vungMienModel.findById(id);
     if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
 
-    const vungMienCha = await this.vungMienModel.findById(ma_vung_mien_cha);
-    if (!vungMienCha)
-      throw new NotFoundException('Vùng miền cha không tồn tại');
-
-    // Cập nhật mã phân cấp cho vùng miền hiện tại
-    const newMaPhanCap = `${vungMienCha.ma_phan_cap}.${vungMienCha._id.toString()}`;
-
-    // Cập nhật mã phân cấp cho tất cả vùng miền con
-    const oldMaPhanCap = vungMien.ma_phan_cap;
-    const regex = new RegExp(`^${oldMaPhanCap}(\\.|$)`);
-    const vungMienCons = await this.vungMienModel.find({ ma_phan_cap: regex });
-
-    // Cập nhật từng vùng miền con
-    for (const vungMienCon of vungMienCons) {
-      const newMaPhanCapCon = vungMienCon.ma_phan_cap.replace(
-        oldMaPhanCap,
-        newMaPhanCap,
+    if (updateVungMienDto.ma_vung_mien_cha) {
+      const vungMienCha = await this.vungMienModel.findById(
+        updateVungMienDto.ma_vung_mien_cha,
       );
-      await this.vungMienModel.findByIdAndUpdate(vungMienCon._id, {
-        ma_phan_cap: newMaPhanCapCon,
+      if (!vungMienCha)
+        throw new NotFoundException('Vùng miền cha không tồn tại');
+
+      // Cập nhật mã phân cấp cho vùng miền hiện tại
+      const newMaPhanCap = `${vungMienCha.ma_phan_cap}.${vungMienCha._id.toString()}`;
+
+      // Cập nhật mã phân cấp cho tất cả vùng miền con
+      const oldMaPhanCap = vungMien.ma_phan_cap;
+      const regex = new RegExp(`^${oldMaPhanCap}(\\.|$)`);
+      const vungMienCons = await this.vungMienModel.find({
+        ma_phan_cap: regex,
       });
+
+      // Cập nhật từng vùng miền con
+      for (const vungMienCon of vungMienCons) {
+        const newMaPhanCapCon = vungMienCon.ma_phan_cap.replace(
+          oldMaPhanCap,
+          newMaPhanCap,
+        );
+        await this.vungMienModel.findByIdAndUpdate(vungMienCon._id, {
+          ma_phan_cap: newMaPhanCapCon,
+        });
+      }
+
+      updateVungMienDto.ma_phan_cap = newMaPhanCap;
+      updateVungMienDto.ma_vung_mien_cha = vungMienCha._id.toString();
     }
 
-    // Cập nhật vùng miền hiện tại
     const updatedVungMien = await this.vungMienModel.findByIdAndUpdate(
       id,
-      {
-        ma_phan_cap: newMaPhanCap,
-        ma_vung_mien_cha: vungMienCha._id,
-      },
+      updateVungMienDto,
       { new: true },
     );
 

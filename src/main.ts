@@ -7,7 +7,13 @@ import { ResponseExceptionFilter } from './filter/response-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.useGlobalFilters(new ResponseExceptionFilter());
   app.enableCors();
   const port = appConfig.port;

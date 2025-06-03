@@ -3,4 +3,5 @@ export enum ChucNangHeThong {
   QuanLyNguoiDung = 'QuanLyNguoiDung',
   QuanLyDonVi = 'QuanLyDonVi',
   QuanLyVungMien = 'QuanLyVungMien',
+  QuanLyKhaoSat = 'QuanLyKhaoSat',
 }

@@ -11,6 +11,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { VungMienModule } from './modules/vung-mien/vung-mien.module';
 import { DonViModule } from './modules/don-vi/don-vi.module';
+import { KhaoSatModule } from './modules/khao-sat/khao-sat.module';
+import { PhanKhaoSatModule } from './modules/phan-khao-sat/phan-khao-sat.module';
+import { CauHoiModule } from './modules/cau-hoi/cau-hoi.module';
+import { DapAnModule } from './modules/dap-an/dap-an.module';
 
 @Module({
   imports: [
@@ -26,6 +30,10 @@ import { DonViModule } from './modules/don-vi/don-vi.module';
     VaiTroQuyenModule,
     VungMienModule,
     DonViModule,
+    KhaoSatModule,
+    PhanKhaoSatModule,
+    CauHoiModule,
+    DapAnModule,
   ],
   controllers: [AppController],
   providers: [AppService],
