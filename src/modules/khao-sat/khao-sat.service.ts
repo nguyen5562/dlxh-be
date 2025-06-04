@@ -4,12 +4,15 @@ import { Model } from 'mongoose';
 import { KhaoSat, KhaoSatDocument } from './schema/khao-sat.schema';
 import { CreateKhaoSatDto } from './dto/create-khao-sat.dto';
 import { UpdateKhaoSatDto } from './dto/update-khao-sat.dto';
+import { PhanKhaoSatService } from '../phan-khao-sat/phan-khao-sat.service';
 
 @Injectable()
 export class KhaoSatService {
   constructor(
     @InjectModel(KhaoSat.name)
     private readonly khaoSatModel: Model<KhaoSatDocument>,
+
+    private readonly phanKhaoSatService: PhanKhaoSatService,
   ) {}
 
   async createKhaoSat(createKhaoSatDto: CreateKhaoSatDto): Promise<KhaoSat> {
@@ -31,6 +34,7 @@ export class KhaoSatService {
   }
 
   async deleteKhaoSat(id: string): Promise<void> {
+    await this.phanKhaoSatService.deletePhanKhaoSatByKhaoSatId(id);
     const deleted = await this.khaoSatModel.findByIdAndDelete(id);
     if (!deleted) throw new NotFoundException(`Khảo sát không tồn tại`);
   }

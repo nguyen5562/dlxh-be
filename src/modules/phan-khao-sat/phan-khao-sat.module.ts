@@ -4,6 +4,7 @@ import { PhanKhaoSatService } from './phan-khao-sat.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PhanKhaoSat, PhanKhaoSatSchema } from './schema/phan-khao-sat.schema';
 import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
+import { CauHoiModule } from '../cau-hoi/cau-hoi.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
       { name: PhanKhaoSat.name, schema: PhanKhaoSatSchema },
     ]),
     NguoiDungModule,
+    CauHoiModule,
   ],
   controllers: [PhanKhaoSatController],
   providers: [PhanKhaoSatService],

@@ -38,6 +38,7 @@ export class CauHoiService {
   }
 
   async deleteCauHoi(id: string): Promise<void> {
+    await this.dapAnService.deleteDapAnByCauHoiId(id);
     const cauHoi = await this.cauHoiModel.findByIdAndDelete(id);
     if (!cauHoi) {
       throw new NotFoundException('Câu hỏi không tồn tại');
@@ -54,5 +55,17 @@ export class CauHoiService {
       throw new NotFoundException('Câu hỏi không tồn tại');
     }
     return cauHoi;
+  }
+
+  async deleteCauHoiByPhanKhaoSatId(phanKhaoSatId: string): Promise<void> {
+    const cauHois = await this.cauHoiModel.find({
+      ma_phan_khao_sat: phanKhaoSatId,
+    });
+
+    for (const cauHoi of cauHois) {
+      await this.dapAnService.deleteDapAnByCauHoiId(cauHoi._id.toString());
+    }
+
+    await this.cauHoiModel.deleteMany({ ma_phan_khao_sat: phanKhaoSatId });
   }
 }

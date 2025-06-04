@@ -4,11 +4,13 @@ import { KhaoSatService } from './khao-sat.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { KhaoSat, KhaoSatSchema } from './schema/khao-sat.schema';
 import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
+import { PhanKhaoSatModule } from '../phan-khao-sat/phan-khao-sat.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: KhaoSat.name, schema: KhaoSatSchema }]),
     NguoiDungModule,
+    PhanKhaoSatModule,
   ],
   controllers: [KhaoSatController],
   providers: [KhaoSatService],
