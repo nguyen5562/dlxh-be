@@ -12,6 +12,7 @@ import { PhanHoiService } from './phan-hoi.service';
 import { CreatePhanHoiDTO } from './dto/create-phan-hoi.dto';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
+import { CreatePhanHoiDetailDTO } from './dto/create-phan-hoi-detail.dto';
 
 @Controller('phan-hoi')
 export class PhanHoiController {
@@ -57,5 +58,22 @@ export class PhanHoiController {
   async deletePhanHoi(@Param('id') id: string, @Response() res) {
     await this.phanHoiService.deletePhanHoi(id);
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa phản hồi thành công');
+  }
+
+  @Post('detail')
+  async createPhanHoiDetail(
+    @Body(ValidationPipe) createPhanHoiDetailDto: CreatePhanHoiDetailDTO,
+    @Response() res,
+  ) {
+    const ans = await this.phanHoiService.createPhanHoiDetail(
+      createPhanHoiDetailDto,
+    );
+
+    return ApiResponse(
+      res,
+      ResponseCode.CREATED,
+      'Tạo phản hồi chi tiết thành công',
+      ans,
+    );
   }
 }

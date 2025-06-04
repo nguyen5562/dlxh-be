@@ -25,7 +25,7 @@ import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
 
-@UseGuards(PermissionsGuard)
+// @UseGuards(PermissionsGuard)
 @Controller('nguoi-dung')
 export class NguoiDungController {
   constructor(private readonly nguoiDungService: NguoiDungService) {}

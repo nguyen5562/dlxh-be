@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { PhanHoi, PhanHoiDocument } from './schema/phan-hoi.schema';
 import { CreatePhanHoiDTO } from './dto/create-phan-hoi.dto';
 import { ChiTietPhanHoiService } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.service';
+import { CreatePhanHoiDetailDTO } from './dto/create-phan-hoi-detail.dto';
 
 @Injectable()
 export class PhanHoiService {
@@ -32,5 +33,29 @@ export class PhanHoiService {
 
   async getAllPhanHoi(): Promise<PhanHoi[]> {
     return await this.phanHoiModel.find();
+  }
+
+  async createPhanHoiDetail(
+    createPhanHoiDetailDto: CreatePhanHoiDetailDTO,
+  ): Promise<PhanHoi> {
+    // Tách thông tin phản hồi và chi tiết phản hồi
+    const { chi_tiet_phan_hoi, ...phanHoiData } = createPhanHoiDetailDto;
+
+    // Tạo phản hồi mới
+    const newPhanHoi = await this.phanHoiModel.create(phanHoiData);
+
+    // Tạo các chi tiết phản hồi
+    const chiTietPhanHoiPromises = chi_tiet_phan_hoi.map((chiTiet) => {
+      return this.chiTietPhanHoiService.createChiTietPhanHoi({
+        ...chiTiet,
+        ma_phan_hoi: newPhanHoi._id.toString(),
+      });
+    });
+
+    // Đợi tất cả chi tiết phản hồi được tạo xong
+    await Promise.all(chiTietPhanHoiPromises);
+
+    // Trả về phản hồi đã tạo
+    return newPhanHoi;
   }
 }

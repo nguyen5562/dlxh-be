@@ -15,6 +15,8 @@ import { KhaoSatModule } from './modules/khao-sat/khao-sat.module';
 import { PhanKhaoSatModule } from './modules/phan-khao-sat/phan-khao-sat.module';
 import { CauHoiModule } from './modules/cau-hoi/cau-hoi.module';
 import { DapAnModule } from './modules/dap-an/dap-an.module';
+import { ChiTietPhanHoiModule } from './modules/chi-tiet-phan-hoi/chi-tiet-phan-hoi.module';
+import { PhanHoiModule } from './modules/phan-hoi/phan-hoi.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { DapAnModule } from './modules/dap-an/dap-an.module';
     PhanKhaoSatModule,
     CauHoiModule,
     DapAnModule,
+    PhanHoiModule,
+    ChiTietPhanHoiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
