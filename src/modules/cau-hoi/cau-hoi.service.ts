@@ -6,6 +6,7 @@ import { CauHoi, CauHoiDocument } from './schema/cau-hoi.schema';
 import { CreateCauHoiDto } from './dto/create-cau-hoi.dto';
 import { UpdateCauHoiDto } from './dto/update-cau-hoi.dto';
 import { DapAnService } from '../dap-an/dap-an.service';
+import { CauHoiDTO } from './dto/cau-hoi.dto';
 
 @Injectable()
 export class CauHoiService {
@@ -67,5 +68,37 @@ export class CauHoiService {
     }
 
     await this.cauHoiModel.deleteMany({ ma_phan_khao_sat: phanKhaoSatId });
+  }
+
+  async getCauHoiChiTiet(id: string): Promise<CauHoiDTO> {
+    const cauHoi = await this.cauHoiModel.findById(id);
+    if (!cauHoi) {
+      throw new NotFoundException('Câu hỏi không tồn tại');
+    }
+
+    const dapAns = await this.dapAnService.getDapAnByCauHoiId(id);
+    return {
+      ...cauHoi.toObject(),
+      cac_dap_an: dapAns,
+    };
+  }
+
+  async getCauHoiByPhanKhaoSatId(phanKhaoSatId: string): Promise<CauHoiDTO[]> {
+    const cauHois = await this.cauHoiModel.find({
+      ma_phan_khao_sat: phanKhaoSatId,
+    });
+
+    const cauHoiDTOs: CauHoiDTO[] = [];
+    for (const cauHoi of cauHois) {
+      const dapAns = await this.dapAnService.getDapAnByCauHoiId(
+        cauHoi._id.toString(),
+      );
+      cauHoiDTOs.push({
+        ...cauHoi.toObject(),
+        cac_dap_an: dapAns,
+      });
+    }
+
+    return cauHoiDTOs;
   }
 }

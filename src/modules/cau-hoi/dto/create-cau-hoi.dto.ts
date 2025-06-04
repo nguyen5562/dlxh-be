@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { LoaiCauHoiSystem } from 'src/const/loai-cau-hoi.const';
+import { LoaiCauHoiSystem } from '../../../const/loai-cau-hoi.const';
 
 export class CreateCauHoiDto {
   @IsNotEmpty()

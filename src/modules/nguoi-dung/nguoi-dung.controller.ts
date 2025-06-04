@@ -45,7 +45,7 @@ export class NguoiDungController {
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
-  @Get('details')
+  @Get('chi-tiet')
   async getAllNguoiDungsAndVaiTroAndQuyens(@Response() res) {
     const ans =
       await this.nguoiDungService.getAllNguoiDungsAndVaiTroAndQuyens();
@@ -116,7 +116,7 @@ export class NguoiDungController {
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.Edit])
-  @Post('assign-role/:userId')
+  @Post('gan-vai-tro/:userId')
   async ganVaiTroChoNguoiDung(
     @Param('userId') userId: string,
     @Body(ValidationPipe) assignRoleDto: AssignRoleDto,
@@ -137,7 +137,7 @@ export class NguoiDungController {
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.Edit])
-  @Post('remove-role/:userId')
+  @Post('xoa-vai-tro/:userId')
   async xoaVaiTroChoNguoiDung(
     @Param('userId') userId: string,
     @Response() res,

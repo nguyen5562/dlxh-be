@@ -52,4 +52,8 @@ export class DapAnService {
   async deleteDapAnByCauHoiId(cauHoiId: string): Promise<void> {
     await this.dapAnModel.deleteMany({ ma_cau_hoi: cauHoiId });
   }
+
+  async getDapAnByCauHoiId(cauHoiId: string): Promise<DapAn[]> {
+    return this.dapAnModel.find({ ma_cau_hoi: cauHoiId });
+  }
 }

@@ -7,18 +7,27 @@ import {
   Post,
   Put,
   Response,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { DapAnService } from './dap-an.service';
-import { ResponseCode } from 'src/const/response.const';
-import { ApiResponse } from 'src/helper/response.helper';
+import { ResponseCode } from '../../const/response.const';
+import { ApiResponse } from '../../helper/response.helper';
 import { CreateDapAnDto } from './dto/create-dap-an.dto';
 import { UpdateDapAnDto } from './dto/update-dap-an.dto';
+import { PermissionsGuard } from '../../guards/permissions.guard';
+import { ModulePermission } from '../../decorators/module-action.decorator';
+import { ActionsPermission } from '../../decorators/module-action.decorator';
+import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 
+@UseGuards(PermissionsGuard)
 @Controller('dap-an')
 export class DapAnController {
   constructor(private dapAnService: DapAnService) {}
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
   async getAllDapAn(@Response() res) {
     const dapAn = await this.dapAnService.getAllDapAn();
@@ -30,6 +39,8 @@ export class DapAnController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
   async getDapAnById(@Param('id') id: string, @Response() res) {
     const dapAn = await this.dapAnService.getDapAnById(id);
@@ -41,6 +52,8 @@ export class DapAnController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createDapAn(
     @Body(ValidationPipe) createDapAnDto: CreateDapAnDto,
@@ -55,6 +68,8 @@ export class DapAnController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
   async updateDapAn(
     @Param('id') id: string,
@@ -70,6 +85,8 @@ export class DapAnController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
   async deleteDapAn(@Param('id') id: string, @Response() res) {
     await this.dapAnService.deleteDapAn(id);

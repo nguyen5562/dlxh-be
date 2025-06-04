@@ -1,3 +1,3 @@
-import { LoaiDapAn } from 'src/enums/loai-dap-an.enum';
+import { LoaiDapAn } from '../enums/loai-dap-an.enum';
 
 export const LoaiDapAnSystem = Object.values(LoaiDapAn);

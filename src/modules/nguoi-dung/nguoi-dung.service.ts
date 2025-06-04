@@ -68,18 +68,19 @@ export class NguoiDungService {
 
   async getAllNguoiDungsAndVaiTroAndQuyens(): Promise<NguoiDungDTO[]> {
     const users = await this.nguoiDungModel.find();
-    const userDTOs = Promise.all(
-      users.map(async (user) => {
-        const result = await this.getVaiTroAndQuyensByNguoiDungId(
-          user._id.toString(),
-        );
-        return {
-          ...user.toObject(),
-          role: result.vaiTro,
-          permissions: result.quyens,
-        };
-      }),
-    );
+
+    const userDTOs: NguoiDungDTO[] = [];
+    for (const user of users) {
+      const result = await this.getVaiTroAndQuyensByNguoiDungId(
+        user._id.toString(),
+      );
+
+      userDTOs.push({
+        ...user.toObject(),
+        role: result.vaiTro,
+        permissions: result.quyens,
+      });
+    }
     return userDTOs;
   }
 

@@ -5,6 +5,7 @@ import { KhaoSat, KhaoSatDocument } from './schema/khao-sat.schema';
 import { CreateKhaoSatDto } from './dto/create-khao-sat.dto';
 import { UpdateKhaoSatDto } from './dto/update-khao-sat.dto';
 import { PhanKhaoSatService } from '../phan-khao-sat/phan-khao-sat.service';
+import { KhaoSatDTO } from './dto/khao-sat.dto';
 
 @Injectable()
 export class KhaoSatService {
@@ -51,5 +52,17 @@ export class KhaoSatService {
       .populate('ma_nguoi_tao', '_id ten_nguoi_dung');
     if (!khaoSat) throw new NotFoundException(`Khảo sát không tồn tại`);
     return khaoSat;
+  }
+
+  async getKhaoSatChiTiet(id: string): Promise<KhaoSatDTO> {
+    const khaoSat = await this.khaoSatModel.findById(id);
+    if (!khaoSat) throw new NotFoundException(`Khảo sát không tồn tại`);
+
+    const phanKhaoSat =
+      await this.phanKhaoSatService.getPhanKhaoSatByKhaoSatId(id);
+    return {
+      ...khaoSat.toObject(),
+      cac_phan_khao_sat: phanKhaoSat,
+    };
   }
 }

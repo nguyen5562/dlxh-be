@@ -8,6 +8,7 @@ import {
 import { CreatePhanKhaoSatDto } from './dto/create-phan-khao-sat.dto';
 import { UpdatePhanKhaoSatDto } from './dto/update-phan-khao-sat.dto';
 import { CauHoiService } from '../cau-hoi/cau-hoi.service';
+import { PhanKhaoSatDTO } from './dto/phan-khao-sat.dto';
 
 @Injectable()
 export class PhanKhaoSatService {
@@ -62,13 +63,6 @@ export class PhanKhaoSatService {
     return phanKhaoSat;
   }
 
-  async getPhanKhaoSatByKhaoSatId(khaoSatId: string): Promise<PhanKhaoSat[]> {
-    const phanKhaoSat = await this.phanKhaoSatModel.find({
-      ma_khao_sat: khaoSatId,
-    });
-    return phanKhaoSat;
-  }
-
   async deletePhanKhaoSatByKhaoSatId(khaoSatId: string): Promise<void> {
     const phanKhaoSats = await this.phanKhaoSatModel.find({
       ma_khao_sat: khaoSatId,
@@ -80,5 +74,38 @@ export class PhanKhaoSatService {
       );
     }
     await this.phanKhaoSatModel.deleteMany({ ma_khao_sat: khaoSatId });
+  }
+
+  async getPhanKhaoSatChiTiet(id: string): Promise<PhanKhaoSatDTO> {
+    const phanKhaoSat = await this.phanKhaoSatModel.findById(id);
+    if (!phanKhaoSat)
+      throw new NotFoundException(`Phần khảo sát không tồn tại`);
+
+    const cauHois = await this.cauHoiService.getCauHoiByPhanKhaoSatId(id);
+    return {
+      ...phanKhaoSat.toObject(),
+      cac_cau_hoi: cauHois,
+    };
+  }
+
+  async getPhanKhaoSatByKhaoSatId(
+    khaoSatId: string,
+  ): Promise<PhanKhaoSatDTO[]> {
+    const phanKhaoSats = await this.phanKhaoSatModel.find({
+      ma_khao_sat: khaoSatId,
+    });
+
+    const phanKhaoSatDTOs: PhanKhaoSatDTO[] = [];
+    for (const phanKhaoSat of phanKhaoSats) {
+      const cauHois = await this.cauHoiService.getCauHoiByPhanKhaoSatId(
+        phanKhaoSat._id.toString(),
+      );
+      phanKhaoSatDTOs.push({
+        ...phanKhaoSat.toObject(),
+        cac_cau_hoi: cauHois,
+      });
+    }
+
+    return phanKhaoSatDTOs;
   }
 }

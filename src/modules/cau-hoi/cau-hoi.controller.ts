@@ -7,18 +7,27 @@ import {
   Post,
   Put,
   Response,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CauHoiService } from './cau-hoi.service';
-import { ResponseCode } from 'src/const/response.const';
-import { ApiResponse } from 'src/helper/response.helper';
+import { ResponseCode } from '../../const/response.const';
+import { ApiResponse } from '../../helper/response.helper';
 import { CreateCauHoiDto } from './dto/create-cau-hoi.dto';
 import { UpdateCauHoiDto } from './dto/update-cau-hoi.dto';
+import { PermissionsGuard } from '../../guards/permissions.guard';
+import { ModulePermission } from '../../decorators/module-action.decorator';
+import { ActionsPermission } from '../../decorators/module-action.decorator';
+import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 
+@UseGuards(PermissionsGuard)
 @Controller('cau-hoi')
 export class CauHoiController {
   constructor(private cauHoiService: CauHoiService) {}
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
   async getAllCauHoi(@Response() res) {
     const cauHoi = await this.cauHoiService.getAllCauHoi();
@@ -30,6 +39,8 @@ export class CauHoiController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
   async getCauHoiById(@Param('id') id: string, @Response() res) {
     const cauHoi = await this.cauHoiService.getCauHoiById(id);
@@ -41,6 +52,8 @@ export class CauHoiController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createCauHoi(
     @Body(ValidationPipe) createCauHoiDto: CreateCauHoiDto,
@@ -55,6 +68,8 @@ export class CauHoiController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
   async updateCauHoi(
     @Param('id') id: string,
@@ -70,9 +85,24 @@ export class CauHoiController {
     );
   }
 
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
   async deleteCauHoi(@Param('id') id: string, @Response() res) {
     await this.cauHoiService.deleteCauHoi(id);
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa câu hỏi thành công');
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('chi-tiet/:id')
+  async getCauHoiChiTiet(@Param('id') id: string, @Response() res) {
+    const ans = await this.cauHoiService.getCauHoiChiTiet(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy câu hỏi chi tiết thành công',
+      ans,
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { IsIn, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { LoaiDapAnSystem } from 'src/const/loai-dap-an.const';
+import { LoaiDapAnSystem } from '../../../const/loai-dap-an.const';
 
 export class CreateDapAnDto {
   @IsNotEmpty()
