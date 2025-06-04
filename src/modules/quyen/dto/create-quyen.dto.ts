@@ -1,7 +1,7 @@
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ChucNangSystem, QuyenSystem } from '../../../const/quyen.const';
 
-export class CreateQuyenDto {
+export class CreateQuyenDTO {
   @IsString()
   @IsNotEmpty()
   @IsIn(ChucNangSystem)

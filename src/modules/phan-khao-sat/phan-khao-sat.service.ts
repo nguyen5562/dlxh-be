@@ -5,8 +5,8 @@ import {
   PhanKhaoSat,
   PhanKhaoSatDocument,
 } from './schema/phan-khao-sat.schema';
-import { CreatePhanKhaoSatDto } from './dto/create-phan-khao-sat.dto';
-import { UpdatePhanKhaoSatDto } from './dto/update-phan-khao-sat.dto';
+import { CreatePhanKhaoSatDTO } from './dto/create-phan-khao-sat.dto';
+import { UpdatePhanKhaoSatDTO } from './dto/update-phan-khao-sat.dto';
 import { CauHoiService } from '../cau-hoi/cau-hoi.service';
 import { PhanKhaoSatDTO } from './dto/phan-khao-sat.dto';
 
@@ -20,7 +20,7 @@ export class PhanKhaoSatService {
   ) {}
 
   async createPhanKhaoSat(
-    createPhanKhaoSatDto: CreatePhanKhaoSatDto,
+    createPhanKhaoSatDto: CreatePhanKhaoSatDTO,
   ): Promise<PhanKhaoSat> {
     const createdPhanKhaoSat = new this.phanKhaoSatModel(createPhanKhaoSatDto);
     return createdPhanKhaoSat.save();
@@ -28,7 +28,7 @@ export class PhanKhaoSatService {
 
   async updatePhanKhaoSat(
     id: string,
-    updatePhanKhaoSatDto: UpdatePhanKhaoSatDto,
+    updatePhanKhaoSatDto: UpdatePhanKhaoSatDTO,
   ): Promise<PhanKhaoSat> {
     const updatedPhanKhaoSat = await this.phanKhaoSatModel.findByIdAndUpdate(
       id,
@@ -63,6 +63,13 @@ export class PhanKhaoSatService {
     return phanKhaoSat;
   }
 
+  async getPhanKhaoSatByKhaoSatId(khaoSatId: string): Promise<PhanKhaoSat[]> {
+    const phanKhaoSats = await this.phanKhaoSatModel.find({
+      ma_khao_sat: khaoSatId,
+    });
+    return phanKhaoSats;
+  }
+
   async deletePhanKhaoSatByKhaoSatId(khaoSatId: string): Promise<void> {
     const phanKhaoSats = await this.phanKhaoSatModel.find({
       ma_khao_sat: khaoSatId,
@@ -81,14 +88,15 @@ export class PhanKhaoSatService {
     if (!phanKhaoSat)
       throw new NotFoundException(`Phần khảo sát không tồn tại`);
 
-    const cauHois = await this.cauHoiService.getCauHoiByPhanKhaoSatId(id);
+    const cauHois =
+      await this.cauHoiService.getCauHoiChiTietByPhanKhaoSatId(id);
     return {
       ...phanKhaoSat.toObject(),
       cac_cau_hoi: cauHois,
     };
   }
 
-  async getPhanKhaoSatByKhaoSatId(
+  async getPhanKhaoSatChiTietByKhaoSatId(
     khaoSatId: string,
   ): Promise<PhanKhaoSatDTO[]> {
     const phanKhaoSats = await this.phanKhaoSatModel.find({
@@ -97,7 +105,7 @@ export class PhanKhaoSatService {
 
     const phanKhaoSatDTOs: PhanKhaoSatDTO[] = [];
     for (const phanKhaoSat of phanKhaoSats) {
-      const cauHois = await this.cauHoiService.getCauHoiByPhanKhaoSatId(
+      const cauHois = await this.cauHoiService.getCauHoiChiTietByPhanKhaoSatId(
         phanKhaoSat._id.toString(),
       );
       phanKhaoSatDTOs.push({

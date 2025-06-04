@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DapAn, DapAnDocument } from './schema/dap-an.schema';
-import { CreateDapAnDto } from './dto/create-dap-an.dto';
-import { UpdateDapAnDto } from './dto/update-dap-an.dto';
+import { CreateDapAnDTO } from './dto/create-dap-an.dto';
+import { UpdateDapAnDTO } from './dto/update-dap-an.dto';
 
 @Injectable()
 export class DapAnService {
@@ -12,14 +12,14 @@ export class DapAnService {
     @InjectModel(DapAn.name) private dapAnModel: Model<DapAnDocument>,
   ) {}
 
-  async createDapAn(createDapAnDto: CreateDapAnDto): Promise<DapAn> {
+  async createDapAn(createDapAnDto: CreateDapAnDTO): Promise<DapAn> {
     const dapAn = new this.dapAnModel(createDapAnDto);
     return dapAn.save();
   }
 
   async updateDapAn(
     id: string,
-    updateDapAnDto: UpdateDapAnDto,
+    updateDapAnDto: UpdateDapAnDTO,
   ): Promise<DapAn> {
     const dapAn = await this.dapAnModel.findByIdAndUpdate(id, updateDapAnDto, {
       new: true,

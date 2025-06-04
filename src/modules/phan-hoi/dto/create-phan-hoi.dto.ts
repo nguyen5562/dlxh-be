@@ -1,15 +1,15 @@
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateVungMienDTO {
-  @IsString()
+export class CreatePhanHoiDTO {
+  @IsMongoId()
   @IsNotEmpty()
-  ten_vung_mien: string;
+  ma_khao_sat: string;
 
   @IsMongoId()
   @IsOptional()
-  ma_vung_mien_cha: string;
+  ma_nguoi_dung: string;
 
   @IsString()
   @IsOptional()
-  ma_phan_cap: string;
+  ghi_chu: string;
 }

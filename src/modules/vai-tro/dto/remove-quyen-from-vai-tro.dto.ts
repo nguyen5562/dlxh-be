@@ -1,6 +1,6 @@
 import { IsArray, IsMongoId, IsOptional } from 'class-validator';
 
-export class RemoveQuyenFromVaiTroDto {
+export class RemoveQuyenFromVaiTroDTO {
   @IsArray()
   @IsOptional()
   @IsMongoId({ each: true })

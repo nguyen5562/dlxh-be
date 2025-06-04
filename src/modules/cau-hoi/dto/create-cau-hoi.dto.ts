@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { LoaiCauHoiSystem } from '../../../const/loai-cau-hoi.const';
 
-export class CreateCauHoiDto {
+export class CreateCauHoiDTO {
   @IsNotEmpty()
   @IsString()
   noi_dung: string;

@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DonVi, DonViDocument } from './schema/don-vi.schema';
-import { CreateDonViDto } from './dto/create-don-vi.dto';
-import { UpdateDonViDto } from './dto/update-don-vi.dto';
+import { CreateDonViDTO } from './dto/create-don-vi.dto';
+import { UpdateDonViDTO } from './dto/update-don-vi.dto';
 import { VungMienService } from '../vung-mien/vung-mien.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class DonViService {
     private readonly vungMienService: VungMienService,
   ) {}
 
-  async createDonVi(createDonViDto: CreateDonViDto): Promise<DonVi> {
+  async createDonVi(createDonViDto: CreateDonViDTO): Promise<DonVi> {
     if (createDonViDto.ma_don_vi_cha) {
       const donViCha = await this.donViModel.findById(
         createDonViDto.ma_don_vi_cha,
@@ -40,7 +40,7 @@ export class DonViService {
 
   async updateDonVi(
     id: string,
-    updateDonViDto: UpdateDonViDto,
+    updateDonViDto: UpdateDonViDTO,
   ): Promise<DonVi> {
     const donVi = await this.donViModel.findById(id);
     if (!donVi) throw new NotFoundException('Đơn vị không tồn tại');

@@ -13,8 +13,8 @@ import {
 import { DapAnService } from './dap-an.service';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
-import { CreateDapAnDto } from './dto/create-dap-an.dto';
-import { UpdateDapAnDto } from './dto/update-dap-an.dto';
+import { CreateDapAnDTO } from './dto/create-dap-an.dto';
+import { UpdateDapAnDTO } from './dto/update-dap-an.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
@@ -53,10 +53,23 @@ export class DapAnController {
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('by-cau-hoi/:id')
+  async getDapAnByCauHoiId(@Param('id') id: string, @Response() res) {
+    const dapAn = await this.dapAnService.getDapAnByCauHoiId(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy đáp án theo câu hỏi thành công',
+      dapAn,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createDapAn(
-    @Body(ValidationPipe) createDapAnDto: CreateDapAnDto,
+    @Body(ValidationPipe) createDapAnDto: CreateDapAnDTO,
     @Response() res,
   ) {
     const dapAn = await this.dapAnService.createDapAn(createDapAnDto);
@@ -73,7 +86,7 @@ export class DapAnController {
   @Put(':id')
   async updateDapAn(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateDapAnDto: UpdateDapAnDto,
+    @Body(ValidationPipe) updateDapAnDto: UpdateDapAnDTO,
     @Response() res,
   ) {
     const dapAn = await this.dapAnService.updateDapAn(id, updateDapAnDto);

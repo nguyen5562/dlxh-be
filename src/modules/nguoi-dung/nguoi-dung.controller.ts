@@ -12,9 +12,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { NguoiDungService } from './nguoi-dung.service';
-import { CreateNguoiDungDto } from './dto/create-nguoi-dung.dto';
-import { UpdateNguoiDungDto } from './dto/update-nguoi-dung.dto';
-import { AssignRoleDto } from './dto/assign-role.dto';
+import { CreateNguoiDungDTO } from './dto/create-nguoi-dung.dto';
+import { UpdateNguoiDungDTO } from './dto/update-nguoi-dung.dto';
+import { AssignRoleDTO } from './dto/assign-role.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ActionsPermission,
@@ -74,7 +74,7 @@ export class NguoiDungController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createNguoiDung(
-    @Body(ValidationPipe) createNguoiDungDto: CreateNguoiDungDto,
+    @Body(ValidationPipe) createNguoiDungDto: CreateNguoiDungDTO,
     @Response() res,
   ) {
     const ans = await this.nguoiDungService.createNguoiDung(createNguoiDungDto);
@@ -91,7 +91,7 @@ export class NguoiDungController {
   @Put(':id')
   async updateNguoiDung(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateNguoiDungDto: UpdateNguoiDungDto,
+    @Body(ValidationPipe) updateNguoiDungDto: UpdateNguoiDungDTO,
     @Response() res,
   ) {
     const ans = await this.nguoiDungService.updateNguoiDung(
@@ -119,7 +119,7 @@ export class NguoiDungController {
   @Post('gan-vai-tro/:userId')
   async ganVaiTroChoNguoiDung(
     @Param('userId') userId: string,
-    @Body(ValidationPipe) assignRoleDto: AssignRoleDto,
+    @Body(ValidationPipe) assignRoleDto: AssignRoleDTO,
     @Response() res,
   ) {
     const ans = await this.nguoiDungService.ganVaiTroChoNguoiDung(

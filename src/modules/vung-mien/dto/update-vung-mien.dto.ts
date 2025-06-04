@@ -1,6 +1,6 @@
 import { IsMongoId, IsOptional, IsString } from 'class-validator';
 
-export class UpdateVungMienDto {
+export class UpdateVungMienDTO {
   @IsString()
   @IsOptional()
   ten_vung_mien?: string;

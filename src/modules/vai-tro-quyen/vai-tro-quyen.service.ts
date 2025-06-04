@@ -5,8 +5,8 @@ import {
   VaiTroQuyenDocument,
 } from './schema/vai-tro-quyen.schema';
 import { Model, Types } from 'mongoose';
-import { CreateVaiTroQuyenDto } from './dto/create-vai-tro-quyen.dto';
-import { UpdateVaiTroQuyenDto } from './dto/update-vai-tro-quyen.dto';
+import { CreateVaiTroQuyenDTO } from './dto/create-vai-tro-quyen.dto';
+import { UpdateVaiTroQuyenDTO } from './dto/update-vai-tro-quyen.dto';
 import { Quyen } from '../quyen/schema/quyen.schema';
 import { QuyenService } from '../quyen/quyen.service';
 
@@ -20,7 +20,7 @@ export class VaiTroQuyenService {
   ) {}
 
   async createVaiTroQuyen(
-    createVaiTroQuyenDto: CreateVaiTroQuyenDto,
+    createVaiTroQuyenDto: CreateVaiTroQuyenDTO,
   ): Promise<VaiTroQuyen> {
     const newVaiTroQuyen =
       await this.vaiTroQuyenModel.create(createVaiTroQuyenDto);
@@ -29,7 +29,7 @@ export class VaiTroQuyenService {
 
   async updateVaiTroQuyen(
     id: string,
-    updateVaiTroQuyenDto: UpdateVaiTroQuyenDto,
+    updateVaiTroQuyenDto: UpdateVaiTroQuyenDTO,
   ): Promise<VaiTroQuyen> {
     const updated = await this.vaiTroQuyenModel.findByIdAndUpdate(
       id,

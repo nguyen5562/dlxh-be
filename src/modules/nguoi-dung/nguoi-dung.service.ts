@@ -7,8 +7,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { NguoiDung, NguoiDungDocument } from './schema/nguoi-dung.schema';
 import { Model, Types } from 'mongoose';
-import { CreateNguoiDungDto } from './dto/create-nguoi-dung.dto';
-import { UpdateNguoiDungDto } from './dto/update-nguoi-dung.dto';
+import { CreateNguoiDungDTO } from './dto/create-nguoi-dung.dto';
+import { UpdateNguoiDungDTO } from './dto/update-nguoi-dung.dto';
 import * as bcrypt from 'bcrypt';
 import { VaiTroService } from '../vai-tro/vai-tro.service';
 import { Quyen } from '../quyen/schema/quyen.schema';
@@ -28,7 +28,7 @@ export class NguoiDungService {
   ) {}
 
   async createNguoiDung(
-    createNguoiDungDto: CreateNguoiDungDto,
+    createNguoiDungDto: CreateNguoiDungDTO,
   ): Promise<NguoiDung> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createNguoiDungDto.mat_khau, salt);
@@ -43,7 +43,7 @@ export class NguoiDungService {
 
   async updateNguoiDung(
     id: string,
-    updateNguoiDungDto: UpdateNguoiDungDto,
+    updateNguoiDungDto: UpdateNguoiDungDTO,
   ): Promise<NguoiDung> {
     const updated = await this.nguoiDungModel.findByIdAndUpdate(
       id,

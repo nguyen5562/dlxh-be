@@ -13,8 +13,8 @@ import {
 import { CauHoiService } from './cau-hoi.service';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
-import { CreateCauHoiDto } from './dto/create-cau-hoi.dto';
-import { UpdateCauHoiDto } from './dto/update-cau-hoi.dto';
+import { CreateCauHoiDTO } from './dto/create-cau-hoi.dto';
+import { UpdateCauHoiDTO } from './dto/update-cau-hoi.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
@@ -56,7 +56,7 @@ export class CauHoiController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createCauHoi(
-    @Body(ValidationPipe) createCauHoiDto: CreateCauHoiDto,
+    @Body(ValidationPipe) createCauHoiDto: CreateCauHoiDTO,
     @Response() res,
   ) {
     const cauHoi = await this.cauHoiService.createCauHoi(createCauHoiDto);
@@ -73,7 +73,7 @@ export class CauHoiController {
   @Put(':id')
   async updateCauHoi(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateCauHoiDto: UpdateCauHoiDto,
+    @Body(ValidationPipe) updateCauHoiDto: UpdateCauHoiDTO,
     @Response() res,
   ) {
     const cauHoi = await this.cauHoiService.updateCauHoi(id, updateCauHoiDto);
@@ -102,6 +102,19 @@ export class CauHoiController {
       res,
       ResponseCode.SUCCESS,
       'Lấy câu hỏi chi tiết thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('by-phan-khao-sat/:id')
+  async getCauHoiByPhanKhaoSatId(@Param('id') id: string, @Response() res) {
+    const ans = await this.cauHoiService.getCauHoiByPhanKhaoSatId(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy câu hỏi theo phần khảo sát thành công',
       ans,
     );
   }

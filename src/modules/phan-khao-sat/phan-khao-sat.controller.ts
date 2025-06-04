@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { PhanKhaoSatService } from './phan-khao-sat.service';
 import { PhanKhaoSat } from './schema/phan-khao-sat.schema';
-import { CreatePhanKhaoSatDto } from './dto/create-phan-khao-sat.dto';
-import { UpdatePhanKhaoSatDto } from './dto/update-phan-khao-sat.dto';
+import { CreatePhanKhaoSatDTO } from './dto/create-phan-khao-sat.dto';
+import { UpdatePhanKhaoSatDTO } from './dto/update-phan-khao-sat.dto';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
 import { PermissionsGuard } from '../../guards/permissions.guard';
@@ -65,10 +65,23 @@ export class PhanKhaoSatController {
   }
 
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('by-khao-sat/:id')
+  async getPhanKhaoSatByKhaoSatId(@Param('id') id: string, @Response() res) {
+    const ans = await this.phanKhaoSatService.getPhanKhaoSatByKhaoSatId(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy phần khảo sát theo khảo sát thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createPhanKhaoSat(
-    @Body(ValidationPipe) createPhanKhaoSatDto: CreatePhanKhaoSatDto,
+    @Body(ValidationPipe) createPhanKhaoSatDto: CreatePhanKhaoSatDTO,
     @Response() res,
   ): Promise<PhanKhaoSat> {
     const ans =
@@ -86,7 +99,7 @@ export class PhanKhaoSatController {
   @Put(':id')
   async updatePhanKhaoSat(
     @Param('id') id: string,
-    @Body(ValidationPipe) updatePhanKhaoSatDto: UpdatePhanKhaoSatDto,
+    @Body(ValidationPipe) updatePhanKhaoSatDto: UpdatePhanKhaoSatDTO,
     @Response() res,
   ): Promise<PhanKhaoSat> {
     const ans = await this.phanKhaoSatService.updatePhanKhaoSat(

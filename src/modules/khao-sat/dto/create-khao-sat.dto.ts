@@ -10,7 +10,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-export class CreateKhaoSatDto {
+export class CreateKhaoSatDTO {
   @IsString()
   @IsNotEmpty()
   tieu_de: string;

@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Quyen, QuyenDocument } from './schema/quyen.schema';
 import { Model, Types } from 'mongoose';
-import { CreateQuyenDto } from './dto/create-quyen.dto';
-import { UpdateQuyenDto } from './dto/update-quyen.dto';
+import { CreateQuyenDTO } from './dto/create-quyen.dto';
+import { UpdateQuyenDTO } from './dto/update-quyen.dto';
 
 @Injectable()
 export class QuyenService {
@@ -12,14 +12,14 @@ export class QuyenService {
     private readonly quyenModel: Model<QuyenDocument>,
   ) {}
 
-  async createQuyen(createQuyenDto: CreateQuyenDto): Promise<Quyen> {
+  async createQuyen(createQuyenDto: CreateQuyenDTO): Promise<Quyen> {
     const newQuyen = await this.quyenModel.create(createQuyenDto);
     return newQuyen;
   }
 
   async updateQuyen(
     id: string,
-    updateQuyenDto: UpdateQuyenDto,
+    updateQuyenDto: UpdateQuyenDTO,
   ): Promise<Quyen> {
     const updated = await this.quyenModel.findByIdAndUpdate(
       id,

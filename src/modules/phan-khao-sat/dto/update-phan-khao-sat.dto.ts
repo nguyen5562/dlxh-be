@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdatePhanKhaoSatDto {
+export class UpdatePhanKhaoSatDTO {
   @IsString()
   @IsOptional()
   tieu_de?: string;

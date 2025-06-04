@@ -1,7 +1,7 @@
 import { IsIn, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { LoaiDapAnSystem } from '../../../const/loai-dap-an.const';
 
-export class CreateDapAnDto {
+export class CreateDapAnDTO {
   @IsNotEmpty()
   @IsString()
   gia_tri: string;

@@ -7,13 +7,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { VaiTro, VaiTroDocument } from './schema/vai-tro.schema';
 import { Model } from 'mongoose';
-import { CreateVaiTroDto } from './dto/create-vai-tro.dto';
-import { UpdateVaiTroDto } from './dto/update-vai-tro.dto';
+import { CreateVaiTroDTO } from './dto/create-vai-tro.dto';
+import { UpdateVaiTroDTO } from './dto/update-vai-tro.dto';
 import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 import { VaiTroQuyenService } from '../vai-tro-quyen/vai-tro-quyen.service';
-import { AddQuyenToVaiTroDto } from './dto/add-quyen-to-vai-tro.dto';
+import { AddQuyenToVaiTroDTO } from './dto/add-quyen-to-vai-tro.dto';
 import { Quyen } from '../quyen/schema/quyen.schema';
-import { RemoveQuyenFromVaiTroDto } from './dto/remove-quyen-from-vai-tro.dto';
+import { RemoveQuyenFromVaiTroDTO } from './dto/remove-quyen-from-vai-tro.dto';
 
 @Injectable()
 export class VaiTroService {
@@ -27,14 +27,14 @@ export class VaiTroService {
     private readonly vaiTroQuyenService: VaiTroQuyenService,
   ) {}
 
-  async createVaiTro(createVaiTroDto: CreateVaiTroDto): Promise<VaiTro> {
+  async createVaiTro(createVaiTroDto: CreateVaiTroDTO): Promise<VaiTro> {
     const newRole = await this.vaiTroModel.create(createVaiTroDto);
     return newRole;
   }
 
   async updateVaiTro(
     id: string,
-    updateVaiTroDto: UpdateVaiTroDto,
+    updateVaiTroDto: UpdateVaiTroDTO,
   ): Promise<VaiTro> {
     const updated = await this.vaiTroModel.findByIdAndUpdate(
       id,
@@ -71,7 +71,7 @@ export class VaiTroService {
 
   async addQuyensToVaiTro(
     id: string,
-    addQuyensToVaiTroDto: AddQuyenToVaiTroDto,
+    addQuyensToVaiTroDto: AddQuyenToVaiTroDTO,
   ): Promise<void> {
     const vaiTro = await this.vaiTroModel.findById(id);
     if (!vaiTro) throw new NotFoundException(`VaiTro not found`);
@@ -84,7 +84,7 @@ export class VaiTroService {
 
   async removeQuyensFromVaiTro(
     id: string,
-    removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDto,
+    removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDTO,
   ): Promise<void> {
     const vaiTro = await this.vaiTroModel.findById(id);
     if (!vaiTro) throw new NotFoundException(`VaiTro not found`);

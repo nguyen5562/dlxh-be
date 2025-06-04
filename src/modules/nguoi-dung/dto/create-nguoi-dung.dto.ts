@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateNguoiDungDto {
+export class CreateNguoiDungDTO {
   @IsString()
   @IsNotEmpty()
   ten_dang_nhap: string;

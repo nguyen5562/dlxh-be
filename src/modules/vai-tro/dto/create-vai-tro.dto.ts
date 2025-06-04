@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export class CreateVaiTroDto {
+export class CreateVaiTroDTO {
   @IsString()
   @IsNotEmpty()
   ten_vai_tro: string;

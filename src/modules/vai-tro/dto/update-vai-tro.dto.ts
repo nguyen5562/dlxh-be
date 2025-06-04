@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateVaiTroDto {
+export class UpdateVaiTroDTO {
   @IsString()
   @IsOptional()
   ten_vai_tro?: string;

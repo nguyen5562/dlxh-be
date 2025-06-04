@@ -10,11 +10,11 @@ import {
   Response,
   ValidationPipe,
 } from '@nestjs/common';
-import { UpdateVaiTroDto } from './dto/update-vai-tro.dto';
+import { UpdateVaiTroDTO } from './dto/update-vai-tro.dto';
 import { VaiTroService } from './vai-tro.service';
-import { CreateVaiTroDto } from './dto/create-vai-tro.dto';
-import { AddQuyenToVaiTroDto } from './dto/add-quyen-to-vai-tro.dto';
-import { RemoveQuyenFromVaiTroDto } from './dto/remove-quyen-from-vai-tro.dto';
+import { CreateVaiTroDTO } from './dto/create-vai-tro.dto';
+import { AddQuyenToVaiTroDTO } from './dto/add-quyen-to-vai-tro.dto';
+import { RemoveQuyenFromVaiTroDTO } from './dto/remove-quyen-from-vai-tro.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ActionsPermission,
@@ -60,7 +60,7 @@ export class VaiTroController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createVaiTro(
-    @Body(ValidationPipe) createVaiTroDto: CreateVaiTroDto,
+    @Body(ValidationPipe) createVaiTroDto: CreateVaiTroDTO,
     @Response() res,
   ) {
     const ans = await this.vaiTroService.createVaiTro(createVaiTroDto);
@@ -77,7 +77,7 @@ export class VaiTroController {
   @Put(':id')
   async updateVaiTro(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateVaiTroDto: UpdateVaiTroDto,
+    @Body(ValidationPipe) updateVaiTroDto: UpdateVaiTroDTO,
     @Response() res,
   ) {
     const ans = await this.vaiTroService.updateVaiTro(id, updateVaiTroDto);
@@ -102,7 +102,7 @@ export class VaiTroController {
   @Post('add-quyens/:id')
   async addQuyensToVaiTro(
     @Param('id') id: string,
-    @Body(ValidationPipe) addQuyensToVaiTroDto: AddQuyenToVaiTroDto,
+    @Body(ValidationPipe) addQuyensToVaiTroDto: AddQuyenToVaiTroDTO,
     @Response() res,
   ) {
     await this.vaiTroService.addQuyensToVaiTro(id, addQuyensToVaiTroDto);
@@ -119,7 +119,7 @@ export class VaiTroController {
   @Post('remove-quyens/:id')
   async removeQuyensFromVaiTro(
     @Param('id') id: string,
-    @Body(ValidationPipe) removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDto,
+    @Body(ValidationPipe) removeQuyensFromVaiTroDto: RemoveQuyenFromVaiTroDTO,
     @Response() res,
   ) {
     await this.vaiTroService.removeQuyensFromVaiTro(

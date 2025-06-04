@@ -1,7 +1,7 @@
 import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 import { LoaiCauHoiSystem } from '../../../const/loai-cau-hoi.const';
 
-export class UpdateCauHoiDto {
+export class UpdateCauHoiDTO {
   @IsOptional()
   @IsString()
   noi_dung?: string;

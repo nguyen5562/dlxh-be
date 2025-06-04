@@ -13,8 +13,8 @@ import {
 import { VungMienService } from './vung-mien.service';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
-import { CreateVungMienDto } from './dto/create-vung-mien.dto';
-import { UpdateVungMienDto } from './dto/update-vung-mien.dto';
+import { CreateVungMienDTO } from './dto/create-vung-mien.dto';
+import { UpdateVungMienDTO } from './dto/update-vung-mien.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ModulePermission,
@@ -58,7 +58,7 @@ export class VungMienController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createVungMien(
-    @Body(ValidationPipe) createVungMienDto: CreateVungMienDto,
+    @Body(ValidationPipe) createVungMienDto: CreateVungMienDTO,
     @Response() res,
   ) {
     const ans = await this.vungMienService.createVungMien(createVungMienDto);
@@ -75,7 +75,7 @@ export class VungMienController {
   @Put(':id')
   async updateVungMien(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateVungMienDto: UpdateVungMienDto,
+    @Body(ValidationPipe) updateVungMienDto: UpdateVungMienDTO,
     @Response() res,
   ) {
     const ans = await this.vungMienService.updateVungMien(

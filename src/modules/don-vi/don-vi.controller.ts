@@ -13,8 +13,8 @@ import {
 import { DonViService } from './don-vi.service';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
-import { CreateDonViDto } from './dto/create-don-vi.dto';
-import { UpdateDonViDto } from './dto/update-don-vi.dto';
+import { CreateDonViDTO } from './dto/create-don-vi.dto';
+import { UpdateDonViDTO } from './dto/update-don-vi.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ModulePermission,
@@ -53,7 +53,7 @@ export class DonViController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createDonVi(
-    @Body(ValidationPipe) createDonViDto: CreateDonViDto,
+    @Body(ValidationPipe) createDonViDto: CreateDonViDTO,
     @Response() res,
   ) {
     const ans = await this.donViService.createDonVi(createDonViDto);
@@ -65,7 +65,7 @@ export class DonViController {
   @Put(':id')
   async updateDonVi(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateDonViDto: UpdateDonViDto,
+    @Body(ValidationPipe) updateDonViDto: UpdateDonViDTO,
     @Response() res,
   ) {
     const ans = await this.donViService.updateDonVi(id, updateDonViDto);

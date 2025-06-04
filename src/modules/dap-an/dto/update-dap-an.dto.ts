@@ -1,7 +1,7 @@
 import { IsIn, IsOptional, IsString } from 'class-validator';
 import { LoaiDapAnSystem } from '../../../const/loai-dap-an.const';
 
-export class UpdateDapAnDto {
+export class UpdateDapAnDTO {
   @IsOptional()
   @IsString()
   gia_tri?: string;

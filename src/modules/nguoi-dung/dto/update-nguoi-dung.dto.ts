@@ -1,6 +1,6 @@
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 
-export class UpdateNguoiDungDto {
+export class UpdateNguoiDungDTO {
   @IsString()
   @IsOptional()
   ten_nguoi_dung?: string;

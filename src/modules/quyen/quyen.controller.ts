@@ -10,9 +10,9 @@ import {
   Response,
   ValidationPipe,
 } from '@nestjs/common';
-import { UpdateQuyenDto } from './dto/update-quyen.dto';
+import { UpdateQuyenDTO } from './dto/update-quyen.dto';
 import { QuyenService } from './quyen.service';
-import { CreateQuyenDto } from './dto/create-quyen.dto';
+import { CreateQuyenDTO } from './dto/create-quyen.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ActionsPermission,
@@ -57,7 +57,7 @@ export class QuyenController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createQuyen(
-    @Body(ValidationPipe) createQuyenDto: CreateQuyenDto,
+    @Body(ValidationPipe) createQuyenDto: CreateQuyenDTO,
     @Response() res,
   ) {
     const ans = await this.quyenService.createQuyen(createQuyenDto);
@@ -71,7 +71,7 @@ export class QuyenController {
   @Put(':id')
   async updateQuyen(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateQuyenDto: UpdateQuyenDto,
+    @Body(ValidationPipe) updateQuyenDto: UpdateQuyenDTO,
     @Response() res,
   ) {
     const ans = await this.quyenService.updateQuyen(id, updateQuyenDto);

@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { KhaoSat, KhaoSatDocument } from './schema/khao-sat.schema';
-import { CreateKhaoSatDto } from './dto/create-khao-sat.dto';
-import { UpdateKhaoSatDto } from './dto/update-khao-sat.dto';
+import { CreateKhaoSatDTO } from './dto/create-khao-sat.dto';
+import { UpdateKhaoSatDTO } from './dto/update-khao-sat.dto';
 import { PhanKhaoSatService } from '../phan-khao-sat/phan-khao-sat.service';
 import { KhaoSatDTO } from './dto/khao-sat.dto';
 
@@ -16,14 +16,14 @@ export class KhaoSatService {
     private readonly phanKhaoSatService: PhanKhaoSatService,
   ) {}
 
-  async createKhaoSat(createKhaoSatDto: CreateKhaoSatDto): Promise<KhaoSat> {
+  async createKhaoSat(createKhaoSatDto: CreateKhaoSatDTO): Promise<KhaoSat> {
     const newKhaoSat = await this.khaoSatModel.create(createKhaoSatDto);
     return newKhaoSat;
   }
 
   async updateKhaoSat(
     id: string,
-    updateKhaoSatDto: UpdateKhaoSatDto,
+    updateKhaoSatDto: UpdateKhaoSatDTO,
   ): Promise<KhaoSat> {
     const updated = await this.khaoSatModel.findByIdAndUpdate(
       id,
@@ -59,7 +59,7 @@ export class KhaoSatService {
     if (!khaoSat) throw new NotFoundException(`Khảo sát không tồn tại`);
 
     const phanKhaoSat =
-      await this.phanKhaoSatService.getPhanKhaoSatByKhaoSatId(id);
+      await this.phanKhaoSatService.getPhanKhaoSatChiTietByKhaoSatId(id);
     return {
       ...khaoSat.toObject(),
       cac_phan_khao_sat: phanKhaoSat,

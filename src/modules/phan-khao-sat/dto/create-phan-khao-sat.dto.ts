@@ -1,6 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreatePhanKhaoSatDto {
+export class CreatePhanKhaoSatDTO {
   @IsString()
   @IsNotEmpty()
   tieu_de: string;

@@ -8,7 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-export class UpdateKhaoSatDto {
+export class UpdateKhaoSatDTO {
   @IsString()
   @IsOptional()
   tieu_de?: string;

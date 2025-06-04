@@ -1,6 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class CreateDonViDto {
+export class CreateDonViDTO {
   @IsString()
   @IsNotEmpty()
   ten_don_vi: string;

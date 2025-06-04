@@ -3,8 +3,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CauHoi, CauHoiDocument } from './schema/cau-hoi.schema';
-import { CreateCauHoiDto } from './dto/create-cau-hoi.dto';
-import { UpdateCauHoiDto } from './dto/update-cau-hoi.dto';
+import { CreateCauHoiDTO } from './dto/create-cau-hoi.dto';
+import { UpdateCauHoiDTO } from './dto/update-cau-hoi.dto';
 import { DapAnService } from '../dap-an/dap-an.service';
 import { CauHoiDTO } from './dto/cau-hoi.dto';
 
@@ -16,14 +16,14 @@ export class CauHoiService {
     private readonly dapAnService: DapAnService,
   ) {}
 
-  async createCauHoi(createCauHoiDto: CreateCauHoiDto): Promise<CauHoi> {
+  async createCauHoi(createCauHoiDto: CreateCauHoiDTO): Promise<CauHoi> {
     const cauHoi = new this.cauHoiModel(createCauHoiDto);
     return cauHoi.save();
   }
 
   async updateCauHoi(
     id: string,
-    updateCauHoiDto: UpdateCauHoiDto,
+    updateCauHoiDto: UpdateCauHoiDTO,
   ): Promise<CauHoi> {
     const cauHoi = await this.cauHoiModel.findByIdAndUpdate(
       id,
@@ -58,6 +58,10 @@ export class CauHoiService {
     return cauHoi;
   }
 
+  async getCauHoiByPhanKhaoSatId(phanKhaoSatId: string): Promise<CauHoi[]> {
+    return this.cauHoiModel.find({ ma_phan_khao_sat: phanKhaoSatId });
+  }
+
   async deleteCauHoiByPhanKhaoSatId(phanKhaoSatId: string): Promise<void> {
     const cauHois = await this.cauHoiModel.find({
       ma_phan_khao_sat: phanKhaoSatId,
@@ -83,7 +87,9 @@ export class CauHoiService {
     };
   }
 
-  async getCauHoiByPhanKhaoSatId(phanKhaoSatId: string): Promise<CauHoiDTO[]> {
+  async getCauHoiChiTietByPhanKhaoSatId(
+    phanKhaoSatId: string,
+  ): Promise<CauHoiDTO[]> {
     const cauHois = await this.cauHoiModel.find({
       ma_phan_khao_sat: phanKhaoSatId,
     });

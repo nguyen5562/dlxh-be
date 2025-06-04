@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsMongoId } from 'class-validator';
 
-export class CreateVaiTroQuyenDto {
+export class CreateVaiTroQuyenDTO {
   @IsMongoId()
   @IsNotEmpty()
   ma_vai_tro: string;

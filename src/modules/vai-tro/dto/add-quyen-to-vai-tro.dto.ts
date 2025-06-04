@@ -1,6 +1,6 @@
 import { IsArray, IsMongoId, IsNotEmpty } from 'class-validator';
 
-export class AddQuyenToVaiTroDto {
+export class AddQuyenToVaiTroDTO {
   @IsArray()
   @IsNotEmpty()
   @IsMongoId({ each: true })

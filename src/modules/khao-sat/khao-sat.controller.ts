@@ -11,8 +11,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { KhaoSatService } from './khao-sat.service';
-import { CreateKhaoSatDto } from './dto/create-khao-sat.dto';
-import { UpdateKhaoSatDto } from './dto/update-khao-sat.dto';
+import { CreateKhaoSatDTO } from './dto/create-khao-sat.dto';
+import { UpdateKhaoSatDTO } from './dto/update-khao-sat.dto';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
 import { PermissionsGuard } from '../../guards/permissions.guard';
@@ -56,7 +56,7 @@ export class KhaoSatController {
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
   async createKhaoSat(
-    @Body(ValidationPipe) createKhaoSatDto: CreateKhaoSatDto,
+    @Body(ValidationPipe) createKhaoSatDto: CreateKhaoSatDTO,
     @Response() res,
   ) {
     const ans = await this.khaoSatService.createKhaoSat(createKhaoSatDto);
@@ -73,7 +73,7 @@ export class KhaoSatController {
   @Put(':id')
   async updateKhaoSat(
     @Param('id') id: string,
-    @Body(ValidationPipe) updateKhaoSatDto: UpdateKhaoSatDto,
+    @Body(ValidationPipe) updateKhaoSatDto: UpdateKhaoSatDTO,
     @Response() res,
   ) {
     const ans = await this.khaoSatService.updateKhaoSat(id, updateKhaoSatDto);

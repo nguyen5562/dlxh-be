@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { VungMien, VungMienDocument } from './schema/vung-mien.schema';
-import { CreateVungMienDto } from './dto/create-vung-mien.dto';
-import { UpdateVungMienDto } from './dto/update-vung-mien.dto';
+import { CreateVungMienDTO } from './dto/create-vung-mien.dto';
+import { UpdateVungMienDTO } from './dto/update-vung-mien.dto';
 
 @Injectable()
 export class VungMienService {
@@ -13,7 +13,7 @@ export class VungMienService {
   ) {}
 
   async createVungMien(
-    createVungMienDto: CreateVungMienDto,
+    createVungMienDto: CreateVungMienDTO,
   ): Promise<VungMien> {
     if (createVungMienDto.ma_vung_mien_cha) {
       const vungMienCha = await this.vungMienModel.findById(
@@ -33,7 +33,7 @@ export class VungMienService {
 
   async updateVungMien(
     id: string,
-    updateVungMienDto: UpdateVungMienDto,
+    updateVungMienDto: UpdateVungMienDTO,
   ): Promise<VungMien> {
     const vungMien = await this.vungMienModel.findById(id);
     if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
