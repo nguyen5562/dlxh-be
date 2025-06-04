@@ -23,7 +23,7 @@ import {
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('vung-mien')
 export class VungMienController {
   constructor(private readonly vungMienService: VungMienService) {}

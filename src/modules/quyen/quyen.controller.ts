@@ -23,7 +23,7 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('quyen')
 export class QuyenController {
   constructor(private readonly quyenService: QuyenService) {}

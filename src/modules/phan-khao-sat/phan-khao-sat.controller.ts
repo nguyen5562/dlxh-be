@@ -22,7 +22,7 @@ import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('phan-khao-sat')
 export class PhanKhaoSatController {
   constructor(private readonly phanKhaoSatService: PhanKhaoSatService) {}
