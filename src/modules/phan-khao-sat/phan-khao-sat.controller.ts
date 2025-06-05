@@ -21,14 +21,13 @@ import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
-@UseGuards(PermissionsGuard)
 @Controller('phan-khao-sat')
 export class PhanKhaoSatController {
   constructor(private readonly phanKhaoSatService: PhanKhaoSatService) {}
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllPhanKhaoSat(@Response() res): Promise<PhanKhaoSat[]> {
     const ans = await this.phanKhaoSatService.getAllPhanKhaoSat();
@@ -40,8 +39,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getPhanKhaoSatById(
     @Param('id') id: string,
@@ -64,8 +62,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get('by-khao-sat/:id')
   async getPhanKhaoSatByKhaoSatId(@Param('id') id: string, @Response() res) {
     const ans = await this.phanKhaoSatService.getPhanKhaoSatByKhaoSatId(id);
@@ -77,6 +74,7 @@ export class PhanKhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -94,6 +92,7 @@ export class PhanKhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -114,6 +113,7 @@ export class PhanKhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -129,8 +129,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getPhanKhaoSatChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.phanKhaoSatService.getPhanKhaoSatChiTiet(id);

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { VungMien, VungMienDocument } from './schema/vung-mien.schema';
 import { CreateVungMienDTO } from './dto/create-vung-mien.dto';
 import { UpdateVungMienDTO } from './dto/update-vung-mien.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class VungMienService {
@@ -94,10 +95,19 @@ export class VungMienService {
     await this.vungMienModel.findByIdAndDelete(id);
   }
 
-  async getAllVungMiens(): Promise<VungMien[]> {
-    return await this.vungMienModel
-      .find()
-      .populate('ma_vung_mien_cha', '_id ten_vung_mien');
+  async getAllVungMiens(
+    pagination: PaginationType,
+  ): Promise<{ data: VungMien[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.vungMienModel
+        .find()
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .populate('ma_vung_mien_cha', '_id ten_vung_mien'),
+      this.vungMienModel.countDocuments(),
+    ]);
+
+    return { data, total };
   }
 
   async getVungMienById(id: string): Promise<VungMien> {

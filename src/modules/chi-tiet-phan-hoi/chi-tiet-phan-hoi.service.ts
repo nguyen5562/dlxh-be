@@ -40,4 +40,15 @@ export class ChiTietPhanHoiService {
   async getAllChiTietPhanHoi(): Promise<ChiTietPhanHoi[]> {
     return await this.chiTietPhanHoiModel.find();
   }
+
+  async getChiTietPhanHoiByPhanHoiId(
+    phanHoiId: string,
+  ): Promise<ChiTietPhanHoi[]> {
+    const chiTietPhanHoi = await this.chiTietPhanHoiModel.find({
+      ma_phan_hoi: phanHoiId,
+    });
+    if (!chiTietPhanHoi)
+      throw new NotFoundException('Chi tiết phản hồi không tồn tại');
+    return chiTietPhanHoi;
+  }
 }

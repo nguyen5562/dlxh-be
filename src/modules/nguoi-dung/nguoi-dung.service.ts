@@ -16,6 +16,7 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { VaiTro } from '../vai-tro/schema/vai-tro.schema';
 import { NguoiDungDTO } from './dto/nguoi-dung.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class NguoiDungService {
@@ -62,8 +63,15 @@ export class NguoiDungService {
     if (!result) throw new NotFoundException(`User not found`);
   }
 
-  async getAllNguoiDungs(): Promise<NguoiDung[]> {
-    return await this.nguoiDungModel.find();
+  async getAllNguoiDungs(
+    pagination: PaginationType,
+  ): Promise<{ data: NguoiDung[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.nguoiDungModel.find().skip(pagination.skip).limit(pagination.limit),
+      this.nguoiDungModel.countDocuments(),
+    ]);
+
+    return { data, total };
   }
 
   async getAllNguoiDungsAndVaiTroAndQuyens(): Promise<NguoiDungDTO[]> {
@@ -104,31 +112,6 @@ export class NguoiDungService {
   async getNguoiDungByTenDangNhap(ten_dang_nhap: string): Promise<NguoiDung> {
     const user = await this.nguoiDungModel.findOne({ ten_dang_nhap });
     if (!user) throw new NotFoundException(`Người dùng này không tồn tại`);
-    return user;
-  }
-
-  async ganVaiTroChoNguoiDung(
-    userId: string,
-    roleId: string,
-  ): Promise<NguoiDung> {
-    const user = await this.nguoiDungModel.findByIdAndUpdate(
-      userId,
-      { ma_vai_tro: new Types.ObjectId(roleId) },
-      { new: true },
-    );
-
-    if (!user) throw new NotFoundException(`User not found`);
-    return user;
-  }
-
-  async xoaVaiTroChoNguoiDung(userId: string): Promise<NguoiDung> {
-    const user = await this.nguoiDungModel.findByIdAndUpdate(
-      userId,
-      { ma_vai_tro: null },
-      { new: true },
-    );
-
-    if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
 
@@ -211,4 +194,179 @@ export class NguoiDungService {
     }
     return false;
   }
+
+  // async canRespond(maKhaoSat: string, maNguoiDung: string): Promise<boolean> {
+  //   const nguoiDung = await this.nguoiDungModel
+  //     .findById(maNguoiDung)
+  //     .populate('ma_don_vi');
+  //   let donVi = nguoiDung.ma_don_vi;
+
+  //   const donViIds: string[] = [];
+  //   const vungMienIds: string[] = [];
+
+  //   // ✅ Lặp đơn vị cha
+  //   while (donVi) {
+  //     donViIds.push(donVi._id);
+
+  //     // ✅ Gom vùng miền tương ứng đơn vị hiện tại
+  //     if (donVi.ma_vung_mien) {
+  //       let vung = await this.vungMienModel.findById(donVi.ma_vung_mien);
+  //       while (vung) {
+  //         if (!vungMienIds.includes(vung._id.toString())) {
+  //           vungMienIds.push(vung._id);
+  //         }
+  //         if (!vung.ma_vung_mien_cha) break;
+  //         vung = await this.vungMienModel.findById(vung.ma_vung_mien_cha);
+  //       }
+  //     }
+
+  //     if (!donVi.ma_don_vi_cha) break;
+  //     donVi = await this.donViModel.findById(donVi.ma_don_vi_cha);
+  //   }
+
+  //   // 🔍 Kiểm tra giới hạn đơn vị
+  //   for (const maDonVi of donViIds) {
+  //     const gioiHan = await this.gioiHanDonViModel.findOne({
+  //       ma_khao_sat: maKhaoSat,
+  //       ma_don_vi: maDonVi,
+  //     });
+  //     if (
+  //       gioiHan &&
+  //       gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+  //     ) {
+  //       return false;
+  //     }
+  //   }
+
+  //   // 🔍 Kiểm tra giới hạn vùng miền
+  //   for (const maVung of vungMienIds) {
+  //     const gioiHan = await this.gioiHanVungModel.findOne({
+  //       ma_khao_sat: maKhaoSat,
+  //       ma_vung_mien: maVung,
+  //     });
+  //     if (
+  //       gioiHan &&
+  //       gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+  //     ) {
+  //       return false;
+  //     }
+  //   }
+
+  //   return true;
+  // }
+
+  // async submitPhanHoi(
+  //   maKhaoSat: string,
+  //   maNguoiDung: string,
+  //   data: any,
+  // ): Promise<boolean> {
+  //   const session = await this.connection.startSession();
+  //   session.startTransaction();
+
+  //   try {
+  //     const nguoiDung = await this.nguoiDungModel
+  //       .findById(maNguoiDung)
+  //       .populate('ma_don_vi')
+  //       .session(session);
+  //     let donVi = nguoiDung.ma_don_vi;
+
+  //     const donViIds: string[] = [];
+  //     const vungMienIds: string[] = [];
+
+  //     // ✅ Gom tất cả đơn vị cha
+  //     while (donVi) {
+  //       donViIds.push(donVi._id.toString());
+
+  //       if (donVi.ma_vung_mien) {
+  //         let vung = await this.vungMienModel
+  //           .findById(donVi.ma_vung_mien)
+  //           .session(session);
+  //         while (vung) {
+  //           if (!vungMienIds.includes(vung._id.toString())) {
+  //             vungMienIds.push(vung._id.toString());
+  //           }
+  //           if (!vung.ma_vung_mien_cha) break;
+  //           vung = await this.vungMienModel
+  //             .findById(vung.ma_vung_mien_cha)
+  //             .session(session);
+  //         }
+  //       }
+
+  //       if (!donVi.ma_don_vi_cha) break;
+  //       donVi = await this.donViModel
+  //         .findById(donVi.ma_don_vi_cha)
+  //         .session(session);
+  //     }
+
+  //     // 🔍 Kiểm tra giới hạn đơn vị
+  //     for (const maDonVi of donViIds) {
+  //       const gioiHan = await this.gioiHanDonViModel
+  //         .findOne({ ma_khao_sat: maKhaoSat, ma_don_vi: maDonVi })
+  //         .session(session);
+  //       if (
+  //         gioiHan &&
+  //         gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+  //       ) {
+  //         throw new Error(`Đơn vị ${maDonVi} đã vượt giới hạn`);
+  //       }
+  //     }
+
+  //     // 🔍 Kiểm tra giới hạn vùng
+  //     for (const maVung of vungMienIds) {
+  //       const gioiHan = await this.gioiHanVungModel
+  //         .findOne({ ma_khao_sat: maKhaoSat, ma_vung_mien: maVung })
+  //         .session(session);
+  //       if (
+  //         gioiHan &&
+  //         gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+  //       ) {
+  //         throw new Error(`Vùng ${maVung} đã vượt giới hạn`);
+  //       }
+  //     }
+
+  //     // ✅ Nếu hợp lệ, tạo phản hồi (giả sử có collection phản hồi)
+  //     const phanHoi = await this.phanHoiModel.create(
+  //       [
+  //         {
+  //           ma_khao_sat: maKhaoSat,
+  //           ma_nguoi_dung: maNguoiDung,
+  //           ...data,
+  //         },
+  //       ],
+  //       { session },
+  //     );
+
+  //     // 🔄 Cập nhật số lượng phản hồi đơn vị
+  //     await Promise.all(
+  //       donViIds.map((ma) =>
+  //         this.gioiHanDonViModel.updateOne(
+  //           { ma_khao_sat: maKhaoSat, ma_don_vi: ma },
+  //           { $inc: { so_luong_phan_hoi_hien_tai: 1 } },
+  //           { session },
+  //         ),
+  //       ),
+  //     );
+
+  //     // 🔄 Cập nhật số lượng phản hồi vùng miền
+  //     await Promise.all(
+  //       vungMienIds.map((ma) =>
+  //         this.gioiHanVungModel.updateOne(
+  //           { ma_khao_sat: maKhaoSat, ma_vung_mien: ma },
+  //           { $inc: { so_luong_phan_hoi_hien_tai: 1 } },
+  //           { session },
+  //         ),
+  //       ),
+  //     );
+
+  //     await session.commitTransaction();
+  //     session.endSession();
+
+  //     return true;
+  //   } catch (err) {
+  //     await session.abortTransaction();
+  //     session.endSession();
+  //     console.error('submitPhanHoi error:', err.message);
+  //     return false;
+  //   }
+  // }
 }

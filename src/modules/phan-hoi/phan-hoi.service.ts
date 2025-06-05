@@ -5,6 +5,8 @@ import { PhanHoi, PhanHoiDocument } from './schema/phan-hoi.schema';
 import { CreatePhanHoiDTO } from './dto/create-phan-hoi.dto';
 import { ChiTietPhanHoiService } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.service';
 import { CreatePhanHoiDetailDTO } from './dto/create-phan-hoi-detail.dto';
+import { PhanHoiDTO } from './dto/phan-hoi.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class PhanHoiService {
@@ -31,8 +33,15 @@ export class PhanHoiService {
     return phanHoi;
   }
 
-  async getAllPhanHoi(): Promise<PhanHoi[]> {
-    return await this.phanHoiModel.find();
+  async getAllPhanHoi(
+    pagination: PaginationType,
+  ): Promise<{ data: PhanHoi[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.phanHoiModel.find().skip(pagination.skip).limit(pagination.limit),
+      this.phanHoiModel.countDocuments(),
+    ]);
+
+    return { data, total };
   }
 
   async createPhanHoiDetail(
@@ -57,5 +66,16 @@ export class PhanHoiService {
 
     // Trả về phản hồi đã tạo
     return newPhanHoi;
+  }
+
+  async getPhanHoiDetailById(id: string): Promise<PhanHoiDTO> {
+    const phanHoi = await this.phanHoiModel.findById(id);
+    if (!phanHoi) throw new NotFoundException('Phản hồi không tồn tại');
+    const chiTietPhanHoi =
+      await this.chiTietPhanHoiService.getChiTietPhanHoiByPhanHoiId(id);
+    return {
+      ...phanHoi.toObject(),
+      chi_tiet_phan_hoi: chiTietPhanHoi,
+    };
   }
 }

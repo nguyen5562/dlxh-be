@@ -14,7 +14,6 @@ import {
 import { NguoiDungService } from './nguoi-dung.service';
 import { CreateNguoiDungDTO } from './dto/create-nguoi-dung.dto';
 import { UpdateNguoiDungDTO } from './dto/update-nguoi-dung.dto';
-import { AssignRoleDTO } from './dto/assign-role.dto';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import {
   ActionsPermission,
@@ -24,6 +23,8 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('nguoi-dung')
@@ -33,29 +34,41 @@ export class NguoiDungController {
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllNguoiDungs(@Response() res) {
-    const ans = await this.nguoiDungService.getAllNguoiDungs();
+  async getAllNguoiDungs(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } =
+      await this.nguoiDungService.getAllNguoiDungs(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy danh sách người dùng thành công',
-      ans,
+      {
+        danh_sach_nguoi_dung: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
-  @Get('chi-tiet')
-  async getAllNguoiDungsAndVaiTroAndQuyens(@Response() res) {
-    const ans =
-      await this.nguoiDungService.getAllNguoiDungsAndVaiTroAndQuyens();
-    return ApiResponse(
-      res,
-      ResponseCode.SUCCESS,
-      'Lấy danh sách chi tiết người dùng và vai trò và quyền thành công',
-      ans,
-    );
-  }
+  // @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
+  // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  // @Get('chi-tiet')
+  // async getAllNguoiDungsAndVaiTroAndQuyens(@Response() res) {
+  //   const ans =
+  //     await this.nguoiDungService.getAllNguoiDungsAndVaiTroAndQuyens();
+  //   return ApiResponse(
+  //     res,
+  //     ResponseCode.SUCCESS,
+  //     'Lấy danh sách chi tiết người dùng và vai trò và quyền thành công',
+  //     ans,
+  //   );
+  // }
 
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
@@ -66,6 +79,20 @@ export class NguoiDungController {
       res,
       ResponseCode.SUCCESS,
       'Lấy người dùng thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('chi-tiet/:id')
+  async getChiTiet(@Param('id') id: string, @Response() res) {
+    const ans =
+      await this.nguoiDungService.getNguoiDungAndVaiTroAndQuyensById(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy chi tiết người dùng thành công',
       ans,
     );
   }
@@ -112,43 +139,6 @@ export class NguoiDungController {
   async deleteNguoiDung(@Param('id') id: string, @Response() res) {
     await this.nguoiDungService.deleteNguoiDung(id);
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa người dùng thành công');
-  }
-
-  @ModulePermission(ChucNangHeThong.PhanQuyen)
-  @ActionsPermission([QuyenHeThong.Edit])
-  @Post('gan-vai-tro/:userId')
-  async ganVaiTroChoNguoiDung(
-    @Param('userId') userId: string,
-    @Body(ValidationPipe) assignRoleDto: AssignRoleDTO,
-    @Response() res,
-  ) {
-    const ans = await this.nguoiDungService.ganVaiTroChoNguoiDung(
-      userId,
-      assignRoleDto.ma_vai_tro,
-    );
-
-    return ApiResponse(
-      res,
-      ResponseCode.SUCCESS,
-      'Gán vai trò cho người dùng thành công',
-      ans,
-    );
-  }
-
-  @ModulePermission(ChucNangHeThong.PhanQuyen)
-  @ActionsPermission([QuyenHeThong.Edit])
-  @Post('xoa-vai-tro/:userId')
-  async xoaVaiTroChoNguoiDung(
-    @Param('userId') userId: string,
-    @Response() res,
-  ) {
-    const ans = await this.nguoiDungService.xoaVaiTroChoNguoiDung(userId);
-    return ApiResponse(
-      res,
-      ResponseCode.SUCCESS,
-      'Xóa vai trò cho người dùng thành công',
-      ans,
-    );
   }
 
   @ModulePermission(ChucNangHeThong.PhanQuyen)

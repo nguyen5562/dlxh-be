@@ -22,6 +22,8 @@ import {
 } from '../../decorators/module-action.decorator';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('don-vi')
@@ -31,13 +33,24 @@ export class DonViController {
   @ModulePermission(ChucNangHeThong.QuanLyDonVi)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllDonVis(@Response() res) {
-    const ans = await this.donViService.getAllDonVis();
+  async getAllDonVis(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } = await this.donViService.getAllDonVis(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy danh sách đơn vị thành công',
-      ans,
+      {
+        danh_sach_don_vi: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 

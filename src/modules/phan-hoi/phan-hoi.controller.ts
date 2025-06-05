@@ -21,7 +21,9 @@ import {
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Controller('phan-hoi')
 export class PhanHoiController {
@@ -31,13 +33,24 @@ export class PhanHoiController {
   @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllPhanHoi(@Response() res) {
-    const ans = await this.phanHoiService.getAllPhanHoi();
+  async getAllPhanHoi(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } = await this.phanHoiService.getAllPhanHoi(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy tất cả phản hồi thành công',
-      ans,
+      {
+        danh_sach_phan_hoi: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 
@@ -93,6 +106,19 @@ export class PhanHoiController {
       res,
       ResponseCode.CREATED,
       'Tạo phản hồi chi tiết thành công',
+      ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('chi-tiet/:id')
+  async getPhanHoiDetailById(@Param('id') id: string, @Response() res) {
+    const ans = await this.phanHoiService.getPhanHoiDetailById(id);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy phản hồi chi tiết thành công',
       ans,
     );
   }

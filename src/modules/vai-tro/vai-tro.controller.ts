@@ -24,6 +24,8 @@ import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('vai-tro')
@@ -33,13 +35,24 @@ export class VaiTroController {
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllVaiTros(@Response() res) {
-    const ans = await this.vaiTroService.getAllVaiTros();
+  async getAllVaiTros(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } = await this.vaiTroService.getAllVaiTros(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy danh sách vai trò thành công',
-      ans,
+      {
+        danh_sach_vai_tro: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 

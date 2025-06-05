@@ -20,27 +20,38 @@ import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
-@UseGuards(PermissionsGuard)
 @Controller('khao-sat')
 export class KhaoSatController {
   constructor(private readonly khaoSatService: KhaoSatService) {}
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async getAllKhaoSat(@Response() res) {
-    const ans = await this.khaoSatService.getAllKhaoSat();
+  async getAllKhaoSat(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } = await this.khaoSatService.getAllKhaoSat(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy danh sách khảo sát thành công',
-      ans,
+      {
+        danh_sach_khao_sat: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getKhaoSatById(@Param('id') id: string, @Response() res) {
     const ans = await this.khaoSatService.getKhaoSatById(id);
@@ -52,6 +63,7 @@ export class KhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -68,6 +80,7 @@ export class KhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -85,6 +98,7 @@ export class KhaoSatController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -93,8 +107,7 @@ export class KhaoSatController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa khảo sát thành công');
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getKhaoSatChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.khaoSatService.getKhaoSatChiTiet(id);

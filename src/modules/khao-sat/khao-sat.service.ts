@@ -6,6 +6,7 @@ import { CreateKhaoSatDTO } from './dto/create-khao-sat.dto';
 import { UpdateKhaoSatDTO } from './dto/update-khao-sat.dto';
 import { PhanKhaoSatService } from '../phan-khao-sat/phan-khao-sat.service';
 import { KhaoSatDTO } from './dto/khao-sat.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class KhaoSatService {
@@ -40,10 +41,19 @@ export class KhaoSatService {
     if (!deleted) throw new NotFoundException(`Khảo sát không tồn tại`);
   }
 
-  async getAllKhaoSat(): Promise<KhaoSat[]> {
-    return await this.khaoSatModel
-      .find()
-      .populate('ma_nguoi_tao', '_id ten_nguoi_dung');
+  async getAllKhaoSat(
+    pagination: PaginationType,
+  ): Promise<{ data: KhaoSat[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.khaoSatModel
+        .find()
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .populate('ma_nguoi_tao', '_id ten_nguoi_dung'),
+      this.khaoSatModel.countDocuments(),
+    ]);
+
+    return { data, total };
   }
 
   async getKhaoSatById(id: string): Promise<KhaoSat> {

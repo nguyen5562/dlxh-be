@@ -38,4 +38,11 @@ export class AuthController {
       },
     );
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('get-id')
+  getId(@Request() req, @Response() res) {
+    const ans = req.user.userId;
+    return ApiResponse(res, ResponseCode.SUCCESS, 'Lấy id thành công', ans);
+  }
 }

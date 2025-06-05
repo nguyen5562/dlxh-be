@@ -14,7 +14,7 @@ export class CreateDonViDTO {
   ma_don_vi_cha: string;
 
   @IsMongoId()
-  @IsOptional()
+  @IsNotEmpty()
   ma_vung_mien: string;
 
   @IsString()

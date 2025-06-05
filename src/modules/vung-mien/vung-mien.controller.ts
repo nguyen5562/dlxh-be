@@ -22,6 +22,8 @@ import {
 } from '../../decorators/module-action.decorator';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
+import { Pagination } from '../../decorators/pagination.decorator';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('vung-mien')
@@ -31,13 +33,25 @@ export class VungMienController {
   @ModulePermission(ChucNangHeThong.QuanLyVungMien)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
-  async getAllVungMiens(@Response() res) {
-    const ans = await this.vungMienService.getAllVungMiens();
+  async getAllVungMiens(
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } =
+      await this.vungMienService.getAllVungMiens(pagination);
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
       'Lấy danh sách vùng miền thành công',
-      ans,
+      {
+        danh_sach_vung_mien: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 

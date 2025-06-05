@@ -5,6 +5,7 @@ import { DonVi, DonViDocument } from './schema/don-vi.schema';
 import { CreateDonViDTO } from './dto/create-don-vi.dto';
 import { UpdateDonViDTO } from './dto/update-don-vi.dto';
 import { VungMienService } from '../vung-mien/vung-mien.service';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class DonViService {
@@ -103,11 +104,20 @@ export class DonViService {
     await this.donViModel.findByIdAndDelete(id);
   }
 
-  async getAllDonVis(): Promise<DonVi[]> {
-    return await this.donViModel
-      .find()
-      .populate('ma_don_vi_cha', '_id ten_don_vi')
-      .populate('ma_vung_mien', '_id ten_vung_mien');
+  async getAllDonVis(
+    pagination: PaginationType,
+  ): Promise<{ data: DonVi[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.donViModel
+        .find()
+        .limit(pagination.limit)
+        .skip(pagination.skip)
+        .populate('ma_don_vi_cha', '_id ten_don_vi')
+        .populate('ma_vung_mien', '_id ten_vung_mien'),
+      this.donViModel.countDocuments(),
+    ]);
+
+    return { data, total };
   }
 
   async getDonViById(id: string): Promise<DonVi> {

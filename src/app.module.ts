@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { NguoiDungModule } from './modules/nguoi-dung/nguoi-dung.module';
 import { VaiTroModule } from './modules/vai-tro/vai-tro.module';
@@ -17,6 +17,7 @@ import { CauHoiModule } from './modules/cau-hoi/cau-hoi.module';
 import { DapAnModule } from './modules/dap-an/dap-an.module';
 import { ChiTietPhanHoiModule } from './modules/chi-tiet-phan-hoi/chi-tiet-phan-hoi.module';
 import { PhanHoiModule } from './modules/phan-hoi/phan-hoi.module';
+import { PaginationMiddleware } from './middleware/pagination.middleware';
 
 @Module({
   imports: [
@@ -42,4 +43,8 @@ import { PhanHoiModule } from './modules/phan-hoi/phan-hoi.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(PaginationMiddleware).forRoutes('*');
+  }
+}

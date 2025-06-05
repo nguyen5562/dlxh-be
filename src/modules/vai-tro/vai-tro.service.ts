@@ -14,6 +14,7 @@ import { VaiTroQuyenService } from '../vai-tro-quyen/vai-tro-quyen.service';
 import { AddQuyenToVaiTroDTO } from './dto/add-quyen-to-vai-tro.dto';
 import { Quyen } from '../quyen/schema/quyen.schema';
 import { RemoveQuyenFromVaiTroDTO } from './dto/remove-quyen-from-vai-tro.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class VaiTroService {
@@ -59,8 +60,14 @@ export class VaiTroService {
     if (!result) throw new NotFoundException(`VaiTro not found`);
   }
 
-  async getAllVaiTros(): Promise<VaiTro[]> {
-    return await this.vaiTroModel.find();
+  async getAllVaiTros(
+    pagination: PaginationType,
+  ): Promise<{ data: VaiTro[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.vaiTroModel.find().skip(pagination.skip).limit(pagination.limit),
+      this.vaiTroModel.countDocuments(),
+    ]);
+    return { data, total };
   }
 
   async getVaiTroById(id: string): Promise<VaiTro> {

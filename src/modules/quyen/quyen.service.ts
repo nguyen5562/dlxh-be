@@ -4,6 +4,7 @@ import { Quyen, QuyenDocument } from './schema/quyen.schema';
 import { Model, Types } from 'mongoose';
 import { CreateQuyenDTO } from './dto/create-quyen.dto';
 import { UpdateQuyenDTO } from './dto/update-quyen.dto';
+import { PaginationType } from '../../middleware/pagination.middleware';
 
 @Injectable()
 export class QuyenService {
@@ -37,8 +38,14 @@ export class QuyenService {
     if (!result) throw new NotFoundException(`Quyen not found`);
   }
 
-  async findAllQuyens(): Promise<Quyen[]> {
-    return await this.quyenModel.find();
+  async findAllQuyens(
+    pagination: PaginationType,
+  ): Promise<{ data: Quyen[]; total: number }> {
+    const [data, total] = await Promise.all([
+      this.quyenModel.find().limit(pagination.limit).skip(pagination.skip),
+      this.quyenModel.countDocuments(),
+    ]);
+    return { data, total };
   }
 
   async findQuyenById(id: string): Promise<Quyen> {
