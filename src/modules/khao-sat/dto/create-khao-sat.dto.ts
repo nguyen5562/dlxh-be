@@ -42,9 +42,9 @@ export class CreateKhaoSatDTO {
   @IsOptional()
   cho_phep_tra_loi_nhieu_lan: boolean;
 
-  @IsBoolean()
-  @IsOptional()
-  cho_phep_an_danh: boolean;
+  // @IsBoolean()
+  // @IsOptional()
+  // cho_phep_an_danh: boolean;
 
   @IsBoolean()
   @IsOptional()

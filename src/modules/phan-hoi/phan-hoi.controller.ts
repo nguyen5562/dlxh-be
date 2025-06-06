@@ -29,7 +29,7 @@ import { PaginationType } from '../../middleware/pagination.middleware';
 export class PhanHoiController {
   constructor(private readonly phanHoiService: PhanHoiService) {}
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
@@ -54,7 +54,7 @@ export class PhanHoiController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
@@ -68,7 +68,7 @@ export class PhanHoiController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   async createPhanHoi(
     @Body(ValidationPipe) createPhanHoiDto: CreatePhanHoiDTO,
@@ -83,7 +83,7 @@ export class PhanHoiController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -92,7 +92,7 @@ export class PhanHoiController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa phản hồi thành công');
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('detail')
   async createPhanHoiDetail(
     @Body(ValidationPipe) createPhanHoiDetailDto: CreatePhanHoiDetailDTO,
@@ -120,6 +120,32 @@ export class PhanHoiController {
       ResponseCode.SUCCESS,
       'Lấy phản hồi chi tiết thành công',
       ans,
+    );
+  }
+
+  @ModulePermission(ChucNangHeThong.QuanLyPhanHoi)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  @Get('nguoi-dung/:id')
+  async getDanhSachNguoiDungDaPhanHoi(
+    @Param('id') id: string,
+    @Response() res,
+    @Pagination() pagination: PaginationType,
+  ) {
+    const { data, total } =
+      await this.phanHoiService.getDanhSachNguoiDungDaPhanHoi(id, pagination);
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Lấy danh sách người dùng đã phản hồi thành công',
+      {
+        danh_sach_da_phan_hoi: data,
+        pagination: {
+          page: pagination.page,
+          size: pagination.limit,
+          total,
+          offset: pagination.skip,
+        },
+      },
     );
   }
 }

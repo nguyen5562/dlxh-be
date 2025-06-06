@@ -18,6 +18,8 @@ import { DapAnModule } from './modules/dap-an/dap-an.module';
 import { ChiTietPhanHoiModule } from './modules/chi-tiet-phan-hoi/chi-tiet-phan-hoi.module';
 import { PhanHoiModule } from './modules/phan-hoi/phan-hoi.module';
 import { PaginationMiddleware } from './middleware/pagination.middleware';
+import { GioiHanDonViModule } from './modules/gioi-han-don-vi/gioi-han-don-vi.module';
+import { GioiHanVungMienModule } from './modules/gioi-han-vung-mien/gioi-han-vung-mien.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { PaginationMiddleware } from './middleware/pagination.middleware';
     DapAnModule,
     PhanHoiModule,
     ChiTietPhanHoiModule,
+    GioiHanDonViModule,
+    GioiHanVungMienModule,
   ],
   controllers: [AppController],
   providers: [AppService],

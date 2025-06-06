@@ -28,7 +28,7 @@ import { PaginationType } from '../../middleware/pagination.middleware';
 export class KhaoSatController {
   constructor(private readonly khaoSatService: KhaoSatService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get()
   async getAllKhaoSat(
     @Response() res,
@@ -51,7 +51,7 @@ export class KhaoSatController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getKhaoSatById(@Param('id') id: string, @Response() res) {
     const ans = await this.khaoSatService.getKhaoSatById(id);
@@ -63,7 +63,7 @@ export class KhaoSatController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -80,7 +80,7 @@ export class KhaoSatController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -98,7 +98,7 @@ export class KhaoSatController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -107,7 +107,7 @@ export class KhaoSatController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa khảo sát thành công');
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getKhaoSatChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.khaoSatService.getKhaoSatChiTiet(id);

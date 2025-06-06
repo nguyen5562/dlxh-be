@@ -27,7 +27,7 @@ import { ApiResponse } from '../../helper/response.helper';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 
-@UseGuards(PermissionsGuard)
+// @UseGuards(PermissionsGuard)
 @Controller('vai-tro')
 export class VaiTroController {
   constructor(private readonly vaiTroService: VaiTroService) {}

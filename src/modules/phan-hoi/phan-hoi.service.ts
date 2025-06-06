@@ -7,6 +7,8 @@ import { ChiTietPhanHoiService } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.se
 import { CreatePhanHoiDetailDTO } from './dto/create-phan-hoi-detail.dto';
 import { PhanHoiDTO } from './dto/phan-hoi.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { NguoiDungPhanHoiDTO } from './dto/nguoi-dung-phan-hoi.dto';
+import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 
 @Injectable()
 export class PhanHoiService {
@@ -15,6 +17,7 @@ export class PhanHoiService {
     private readonly phanHoiModel: Model<PhanHoiDocument>,
 
     private readonly chiTietPhanHoiService: ChiTietPhanHoiService,
+    private readonly nguoiDungService: NguoiDungService,
   ) {}
 
   async createPhanHoi(createPhanHoiDto: CreatePhanHoiDTO): Promise<PhanHoi> {
@@ -77,5 +80,36 @@ export class PhanHoiService {
       ...phanHoi.toObject(),
       chi_tiet_phan_hoi: chiTietPhanHoi,
     };
+  }
+
+  async getDanhSachNguoiDungDaPhanHoi(
+    khaoSatId: string,
+    pagination: PaginationType,
+  ): Promise<{ data: NguoiDungPhanHoiDTO[]; total: number }> {
+    // Find all feedbacks for the given survey
+    const [phanHois, total] = await Promise.all([
+      this.phanHoiModel
+        .find({ ma_khao_sat: khaoSatId })
+        .skip(pagination.skip)
+        .limit(pagination.limit),
+      this.phanHoiModel.countDocuments({ ma_khao_sat: khaoSatId }),
+    ]);
+
+    // Get user information for each feedback
+    const data = await Promise.all(
+      phanHois
+        .filter((phanHoi) => phanHoi.ma_nguoi_dung) // Filter out feedbacks without users
+        .map(async (phanHoi) => {
+          const user = await this.nguoiDungService.getNguoiDungById(
+            phanHoi.ma_nguoi_dung.toString(),
+          );
+          return {
+            ...user,
+            ma_phan_hoi: phanHoi._id.toString(),
+          };
+        }),
+    );
+
+    return { data, total };
   }
 }

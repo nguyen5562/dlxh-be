@@ -6,15 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreateNguoiDungDTO {
-  @IsString()
-  @IsNotEmpty()
-  ten_dang_nhap: string;
-
-  @IsString()
-  @IsNotEmpty()
-  mat_khau: string;
-
+export class RegisterDTO {
   @IsString()
   @IsNotEmpty()
   ten_nguoi_dung: string;
@@ -30,8 +22,4 @@ export class CreateNguoiDungDTO {
   @IsMongoId()
   @IsNotEmpty()
   ma_don_vi: string;
-
-  @IsMongoId()
-  @IsOptional()
-  ma_vai_tro: string;
 }

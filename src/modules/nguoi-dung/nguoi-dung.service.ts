@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -17,6 +18,8 @@ import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { VaiTro } from '../vai-tro/schema/vai-tro.schema';
 import { NguoiDungDTO } from './dto/nguoi-dung.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { RegisterDTO } from './dto/resgiter.dto';
+import { DEFAULT_PASSWORD } from 'src/const/default.const';
 
 @Injectable()
 export class NguoiDungService {
@@ -31,6 +34,11 @@ export class NguoiDungService {
   async createNguoiDung(
     createNguoiDungDto: CreateNguoiDungDTO,
   ): Promise<NguoiDung> {
+    const checkUser = await this.nguoiDungModel.findOne({
+      ten_dang_nhap: createNguoiDungDto.ten_dang_nhap,
+    });
+    if (checkUser) throw new BadRequestException('Tên đăng nhập đã tồn tại');
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createNguoiDungDto.mat_khau, salt);
 
@@ -193,6 +201,23 @@ export class NguoiDungService {
       }
     }
     return false;
+  }
+
+  async register(registerDto: RegisterDTO): Promise<NguoiDung> {
+    const checkUser = await this.nguoiDungModel.findOne({
+      ten_dang_nhap: registerDto.ten_nguoi_dung,
+    });
+    if (checkUser) throw new BadRequestException('Tên đăng nhập đã tồn tại');
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, salt);
+    const newUser = await this.nguoiDungModel.create({
+      ...registerDto,
+      mat_khau: hashedPassword,
+      ten_dang_nhap: registerDto.ten_nguoi_dung,
+    });
+
+    return newUser;
   }
 
   // async canRespond(maKhaoSat: string, maNguoiDung: string): Promise<boolean> {

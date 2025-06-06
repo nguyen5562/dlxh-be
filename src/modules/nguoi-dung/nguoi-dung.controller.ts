@@ -25,12 +25,18 @@ import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { RegisterDTO } from './dto/resgiter.dto';
+import { JwtService } from '@nestjs/jwt';
+import { DEFAULT_PASSWORD } from '../../const/default.const';
 
-@UseGuards(PermissionsGuard)
 @Controller('nguoi-dung')
 export class NguoiDungController {
-  constructor(private readonly nguoiDungService: NguoiDungService) {}
+  constructor(
+    private readonly nguoiDungService: NguoiDungService,
+    private readonly jwtService: JwtService,
+  ) {}
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
@@ -56,6 +62,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   // @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   // @Get('chi-tiet')
@@ -70,6 +77,7 @@ export class NguoiDungController {
   //   );
   // }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
@@ -83,6 +91,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('chi-tiet/:id')
@@ -97,6 +106,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -113,6 +123,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -133,6 +144,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -141,6 +153,7 @@ export class NguoiDungController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa người dùng thành công');
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('quyens/:userId')
@@ -158,6 +171,7 @@ export class NguoiDungController {
     );
   }
 
+  // @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('vai-tro/:userId')
@@ -172,6 +186,32 @@ export class NguoiDungController {
       ResponseCode.SUCCESS,
       'Lấy vai trò cho người dùng thành công',
       ans,
+    );
+  }
+
+  @Post('register')
+  async resgister(
+    @Body(ValidationPipe) registerDto: RegisterDTO,
+    @Response() res,
+  ) {
+    const newUser = await this.nguoiDungService.register(registerDto);
+    const payload = {
+      sub: newUser._id,
+      ten_nguoi_dung: newUser.ten_nguoi_dung,
+    };
+
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Tạo người dùng mới thành công',
+      {
+        nguoi_dung: newUser,
+        access_token: await this.jwtService.signAsync(payload),
+        tai_khoan: {
+          ten_dang_nhap: newUser.ten_dang_nhap,
+          mat_khau: DEFAULT_PASSWORD,
+        },
+      },
     );
   }
 }
