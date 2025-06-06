@@ -26,7 +26,7 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 export class CauHoiController {
   constructor(private cauHoiService: CauHoiService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllCauHoi(@Response() res) {
     const cauHoi = await this.cauHoiService.getAllCauHoi();
@@ -38,7 +38,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getCauHoiById(@Param('id') id: string, @Response() res) {
     const cauHoi = await this.cauHoiService.getCauHoiById(id);
@@ -50,7 +50,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -67,7 +67,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -85,7 +85,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -94,7 +94,7 @@ export class CauHoiController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa câu hỏi thành công');
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getCauHoiChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.cauHoiService.getCauHoiChiTiet(id);
@@ -106,7 +106,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('by-phan-khao-sat/:id')
   async getCauHoiByPhanKhaoSatId(@Param('id') id: string, @Response() res) {
     const ans = await this.cauHoiService.getCauHoiByPhanKhaoSatId(id);

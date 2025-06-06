@@ -25,7 +25,7 @@ import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('don-vi')
 export class DonViController {
   constructor(private readonly donViService: DonViService) {}

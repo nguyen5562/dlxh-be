@@ -25,7 +25,7 @@ import { ResponseCode } from '../../const/response.const';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('quyen')
 export class QuyenController {
   constructor(private readonly quyenService: QuyenService) {}

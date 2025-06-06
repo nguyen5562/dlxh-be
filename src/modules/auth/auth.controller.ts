@@ -14,14 +14,14 @@ export class AuthController {
     private readonly nguoiDungService: NguoiDungService,
   ) {}
 
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Response() res) {
     const ans = await this.authService.login(req.user);
     return ApiResponse(res, ResponseCode.SUCCESS, 'Đăng nhập thành công', ans);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req, @Response() res) {
     const userId = req.user.userId;
@@ -39,7 +39,7 @@ export class AuthController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('get-id')
   getId(@Request() req, @Response() res) {
     const ans = req.user.userId;

@@ -21,7 +21,7 @@ import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 
-// @UseGuards(PermissionsGuard)
+@UseGuards(PermissionsGuard)
 @Controller('dap-an')
 export class DapAnController {
   constructor(private dapAnService: DapAnService) {}

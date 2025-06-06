@@ -36,7 +36,7 @@ export class NguoiDungController {
     private readonly jwtService: JwtService,
   ) {}
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
@@ -62,7 +62,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   // @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   // @Get('chi-tiet')
@@ -77,7 +77,7 @@ export class NguoiDungController {
   //   );
   // }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
@@ -91,7 +91,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('chi-tiet/:id')
@@ -106,7 +106,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -123,7 +123,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -144,7 +144,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
@@ -153,7 +153,7 @@ export class NguoiDungController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa người dùng thành công');
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('quyens/:userId')
@@ -171,7 +171,7 @@ export class NguoiDungController {
     );
   }
 
-  // @UseGuards(PermissionsGuard)
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.PhanQuyen)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get('vai-tro/:userId')
