@@ -76,7 +76,6 @@ export class NguoiDungController {
   //     ans,
   //   );
   // }
-
   @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])

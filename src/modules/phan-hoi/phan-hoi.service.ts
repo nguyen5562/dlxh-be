@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { PhanHoi, PhanHoiDocument } from './schema/phan-hoi.schema';
 import { CreatePhanHoiDTO } from './dto/create-phan-hoi.dto';
 import { ChiTietPhanHoiService } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.service';
@@ -97,9 +97,8 @@ export class PhanHoiService {
 
     // Get user information for each feedback
     const data = await Promise.all(
-      phanHois
-        .filter((phanHoi) => phanHoi.ma_nguoi_dung) // Filter out feedbacks without users
-        .map(async (phanHoi) => {
+      phanHois.map(async (phanHoi) => {
+        if (phanHoi.ma_nguoi_dung) {
           const user = await this.nguoiDungService.getNguoiDungById(
             phanHoi.ma_nguoi_dung.toString(),
           );
@@ -107,7 +106,19 @@ export class PhanHoiService {
             ...user,
             ma_phan_hoi: phanHoi._id.toString(),
           };
-        }),
+        }
+        return {
+          _id: new Types.ObjectId(),
+          ma_vai_tro: new Types.ObjectId(),
+          ten_dang_nhap: '',
+          mat_khau: '',
+          ten_nguoi_dung: '',
+          email: '',
+          sdt: '',
+          ma_don_vi: new Types.ObjectId(),
+          ma_phan_hoi: phanHoi._id.toString(),
+        };
+      }),
     );
 
     return { data, total };
