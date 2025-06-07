@@ -18,6 +18,9 @@ export class KhaoSatService {
   ) {}
 
   async createKhaoSat(createKhaoSatDto: CreateKhaoSatDTO): Promise<KhaoSat> {
+    if (!createKhaoSatDto.cho_phep_tra_loi_nhieu_lan)
+      createKhaoSatDto.gioi_han_phan_hoi_moi_nguoi = 1;
+
     const newKhaoSat = await this.khaoSatModel.create(createKhaoSatDto);
     return newKhaoSat;
   }

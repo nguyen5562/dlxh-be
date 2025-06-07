@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { PhanHoi, PhanHoiDocument } from './schema/phan-hoi.schema';
 import { CreatePhanHoiDTO } from './dto/create-phan-hoi.dto';
 import { ChiTietPhanHoiService } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.service';
@@ -10,6 +15,8 @@ import { PaginationType } from '../../middleware/pagination.middleware';
 import { NguoiDungPhanHoiDTO } from './dto/nguoi-dung-phan-hoi.dto';
 import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
 import { NguoiDungDocument } from '../nguoi-dung/schema/nguoi-dung.schema';
+import { GioiHanDonViService } from '../gioi-han-don-vi/gioi-han-don-vi.service';
+import { GioiHanVungMienService } from '../gioi-han-vung-mien/gioi-han-vung-mien.service';
 
 @Injectable()
 export class PhanHoiService {
@@ -18,7 +25,13 @@ export class PhanHoiService {
     private readonly phanHoiModel: Model<PhanHoiDocument>,
 
     private readonly chiTietPhanHoiService: ChiTietPhanHoiService,
+
+    @Inject(forwardRef(() => NguoiDungService))
     private readonly nguoiDungService: NguoiDungService,
+
+    private readonly gioiHanDonViService: GioiHanDonViService,
+
+    private readonly gioiHanVungMienService: GioiHanVungMienService,
   ) {}
 
   async createPhanHoi(createPhanHoiDto: CreatePhanHoiDTO): Promise<PhanHoi> {
@@ -68,6 +81,12 @@ export class PhanHoiService {
     // Đợi tất cả chi tiết phản hồi được tạo xong
     await Promise.all(chiTietPhanHoiPromises);
 
+    // Tăng số phản hồi trong 2 bảng giới hạn
+    await this.tangBoDemSauKhiTaoPhanHoi(
+      phanHoiData.ma_khao_sat,
+      phanHoiData.ma_nguoi_dung,
+    );
+
     // Trả về phản hồi đã tạo
     return newPhanHoi;
   }
@@ -110,14 +129,14 @@ export class PhanHoiService {
           };
         }
         return {
-          _id: new Types.ObjectId(),
-          ma_vai_tro: new Types.ObjectId(),
-          ten_dang_nhap: '',
-          mat_khau: '',
-          ten_nguoi_dung: '',
-          email: '',
-          sdt: '',
-          ma_don_vi: new Types.ObjectId(),
+          _id: null,
+          ma_vai_tro: null,
+          ten_dang_nhap: null,
+          mat_khau: null,
+          ten_nguoi_dung: null,
+          email: null,
+          sdt: null,
+          ma_don_vi: null,
           ma_phan_hoi: phanHoi._id.toString(),
           thoi_gian_phan_hoi: phanHoi.thoi_gian_phan_hoi.toString(),
         };
@@ -125,5 +144,39 @@ export class PhanHoiService {
     );
 
     return { data, total };
+  }
+
+  async getSoPhanHoiTrongKhaoSatCuaNguoiDung(
+    khaoSatId: string,
+    nguoiDungId,
+  ): Promise<number> {
+    const ans = this.phanHoiModel.countDocuments({
+      ma_khao_sat: khaoSatId,
+      ma_nguoi_dung: nguoiDungId,
+    });
+    return ans;
+  }
+
+  async tangBoDemSauKhiTaoPhanHoi(
+    maKhaoSat: string,
+    maNguoiDung: string,
+  ): Promise<void> {
+    const { donViIds, vungMienIds } =
+      await this.nguoiDungService.getDonViIDsAndVungMienIDs(maNguoiDung);
+
+    await Promise.all(
+      donViIds.map(async (maDonVi) => {
+        await this.gioiHanDonViService.tangSoPhanHoiHienTai(maKhaoSat, maDonVi);
+      }),
+    );
+
+    await Promise.all(
+      vungMienIds.map(async (maVungMien) => {
+        await this.gioiHanVungMienService.tangSoPhanHoiHienTai(
+          maKhaoSat,
+          maVungMien,
+        );
+      }),
+    );
   }
 }

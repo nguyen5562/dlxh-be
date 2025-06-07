@@ -18,8 +18,11 @@ export class NguoiDung {
   @Prop({ required: true })
   mat_khau: string;
 
-  @Prop()
+  @Prop({ required: true })
   ten_nguoi_dung: string;
+
+  @Prop({ required: true })
+  gioi_tinh: string;
 
   @Prop()
   email: string;
@@ -27,7 +30,7 @@ export class NguoiDung {
   @Prop()
   sdt: string;
 
-  @Prop({ type: Types.ObjectId, ref: DonVi.name, default: null })
+  @Prop({ type: Types.ObjectId, ref: DonVi.name, required: true })
   ma_don_vi: Types.ObjectId;
 }
 

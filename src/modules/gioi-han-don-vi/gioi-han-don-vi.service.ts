@@ -80,4 +80,29 @@ export class GioiHanDonViService {
     ]);
     return { data, total };
   }
+
+  async getByMaKhaoSatAndMaDonVi(
+    maKhaoSat: string,
+    maDonVi: string,
+  ): Promise<GioiHanDonVi | null> {
+    const ans = await this.gioiHanDonViModel.findOne({
+      ma_khao_sat: maKhaoSat,
+      ma_vung_mien: maDonVi,
+    });
+
+    return ans;
+  }
+
+  async tangSoPhanHoiHienTai(
+    maKhaoSat: string,
+    maDonVi: string,
+  ): Promise<void> {
+    await this.gioiHanDonViModel.updateOne(
+      {
+        ma_khao_sat: maKhaoSat,
+        ma_don_vi: maDonVi,
+      },
+      { $inc: { so_luong_phan_hoi_hien_tai: 1 } },
+    );
+  }
 }

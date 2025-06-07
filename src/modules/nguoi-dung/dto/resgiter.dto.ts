@@ -1,15 +1,22 @@
 import {
   IsEmail,
+  IsIn,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Sex } from 'src/const/gioi-tinh.const';
 
 export class RegisterDTO {
   @IsString()
   @IsNotEmpty()
   ten_nguoi_dung: string;
+
+  @IsIn(Sex)
+  @IsString()
+  @IsNotEmpty()
+  gioi_tinh: string;
 
   @IsEmail()
   @IsOptional()

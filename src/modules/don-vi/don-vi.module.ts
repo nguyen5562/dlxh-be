@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DonVi, DonViSchema } from './schema/don-vi.schema';
 import { DonViController } from './don-vi.controller';
@@ -10,7 +10,7 @@ import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
   imports: [
     MongooseModule.forFeature([{ name: DonVi.name, schema: DonViSchema }]),
     VungMienModule,
-    NguoiDungModule,
+    forwardRef(() => NguoiDungModule),
   ],
   controllers: [DonViController],
   providers: [DonViService],

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GioiHanDonViService } from './gioi-han-don-vi.service';
 import { GioiHanDonViController } from './gioi-han-don-vi.controller';
@@ -13,7 +13,7 @@ import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
     MongooseModule.forFeature([
       { name: GioiHanDonVi.name, schema: GioiHanDonViSchema },
     ]),
-    NguoiDungModule,
+    forwardRef(() => NguoiDungModule),
   ],
   controllers: [GioiHanDonViController],
   providers: [GioiHanDonViService],

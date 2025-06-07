@@ -21,6 +21,12 @@ import { PaginationType } from '../../middleware/pagination.middleware';
 import { RegisterDTO } from './dto/resgiter.dto';
 import { DEFAULT_PASSWORD } from 'src/const/default.const';
 import { generateUniqueString } from 'src/utils/gen-string';
+import { VungMienService } from '../vung-mien/vung-mien.service';
+import { DonViService } from '../don-vi/don-vi.service';
+import { GioiHanDonViService } from '../gioi-han-don-vi/gioi-han-don-vi.service';
+import { GioiHanVungMienService } from '../gioi-han-vung-mien/gioi-han-vung-mien.service';
+import { KhaoSatService } from '../khao-sat/khao-sat.service';
+import { PhanHoiService } from '../phan-hoi/phan-hoi.service';
 
 @Injectable()
 export class NguoiDungService {
@@ -30,6 +36,24 @@ export class NguoiDungService {
 
     @Inject(forwardRef(() => VaiTroService))
     private readonly vaiTroService: VaiTroService,
+
+    @Inject(forwardRef(() => VungMienService))
+    private readonly vungMienService: VungMienService,
+
+    @Inject(forwardRef(() => DonViService))
+    private readonly donViService: DonViService,
+
+    @Inject(forwardRef(() => GioiHanDonViService))
+    private readonly gioiHanDonViService: GioiHanDonViService,
+
+    @Inject(forwardRef(() => GioiHanVungMienService))
+    private readonly gioiHanVungMienService: GioiHanVungMienService,
+
+    @Inject(forwardRef(() => KhaoSatService))
+    private readonly khaoSatService: KhaoSatService,
+
+    @Inject(forwardRef(() => PhanHoiService))
+    private readonly phanHoiService: PhanHoiService,
   ) {}
 
   async createNguoiDung(
@@ -221,65 +245,108 @@ export class NguoiDungService {
     return newUser;
   }
 
-  // async canRespond(maKhaoSat: string, maNguoiDung: string): Promise<boolean> {
-  //   const nguoiDung = await this.nguoiDungModel
-  //     .findById(maNguoiDung)
-  //     .populate('ma_don_vi');
-  //   let donVi = nguoiDung.ma_don_vi;
+  async getDonViIDsAndVungMienIDs(
+    maNguoiDung: string,
+  ): Promise<{ donViIds: string[]; vungMienIds: string[] }> {
+    const nguoiDung = await this.nguoiDungModel.findById(maNguoiDung);
+    if (!nguoiDung)
+      throw new BadRequestException('Người dùng này không tồn tại');
+    let donVi = await this.donViService.getDonViById(
+      nguoiDung.ma_don_vi.toString(),
+    );
 
-  //   const donViIds: string[] = [];
-  //   const vungMienIds: string[] = [];
+    const donViIds: string[] = [];
+    const vungMienIds: string[] = [];
 
-  //   // ✅ Lặp đơn vị cha
-  //   while (donVi) {
-  //     donViIds.push(donVi._id);
+    // ✅ Lặp đơn vị cha
+    while (donVi) {
+      donViIds.push(donVi._id.toString());
 
-  //     // ✅ Gom vùng miền tương ứng đơn vị hiện tại
-  //     if (donVi.ma_vung_mien) {
-  //       let vung = await this.vungMienModel.findById(donVi.ma_vung_mien);
-  //       while (vung) {
-  //         if (!vungMienIds.includes(vung._id.toString())) {
-  //           vungMienIds.push(vung._id);
-  //         }
-  //         if (!vung.ma_vung_mien_cha) break;
-  //         vung = await this.vungMienModel.findById(vung.ma_vung_mien_cha);
-  //       }
-  //     }
+      // ✅ Gom vùng miền tương ứng đơn vị hiện tại
+      if (donVi.ma_vung_mien) {
+        let vung = await this.vungMienService.getVungMienById(
+          donVi.ma_vung_mien.toString(),
+        );
+        while (vung) {
+          if (!vungMienIds.includes(vung._id.toString())) {
+            vungMienIds.push(vung._id.toString());
+          }
+          if (!vung.ma_vung_mien_cha) break;
+          vung = await this.vungMienService.getVungMienById(
+            vung.ma_vung_mien_cha.toString(),
+          );
+        }
+      }
 
-  //     if (!donVi.ma_don_vi_cha) break;
-  //     donVi = await this.donViModel.findById(donVi.ma_don_vi_cha);
-  //   }
+      if (!donVi.ma_don_vi_cha) break;
+      donVi = await this.donViService.getDonViById(
+        donVi.ma_don_vi_cha.toString(),
+      );
+    }
 
-  //   // 🔍 Kiểm tra giới hạn đơn vị
-  //   for (const maDonVi of donViIds) {
-  //     const gioiHan = await this.gioiHanDonViModel.findOne({
-  //       ma_khao_sat: maKhaoSat,
-  //       ma_don_vi: maDonVi,
-  //     });
-  //     if (
-  //       gioiHan &&
-  //       gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
-  //     ) {
-  //       return false;
-  //     }
-  //   }
+    return { donViIds, vungMienIds };
+  }
 
-  //   // 🔍 Kiểm tra giới hạn vùng miền
-  //   for (const maVung of vungMienIds) {
-  //     const gioiHan = await this.gioiHanVungModel.findOne({
-  //       ma_khao_sat: maKhaoSat,
-  //       ma_vung_mien: maVung,
-  //     });
-  //     if (
-  //       gioiHan &&
-  //       gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
-  //     ) {
-  //       return false;
-  //     }
-  //   }
+  async checkVungMienAndDonVi(
+    maKhaoSat: string,
+    maNguoiDung: string,
+  ): Promise<boolean> {
+    const { donViIds, vungMienIds } =
+      await this.getDonViIDsAndVungMienIDs(maNguoiDung);
 
-  //   return true;
-  // }
+    // 🔍 Kiểm tra giới hạn đơn vị
+    for (const maDonVi of donViIds) {
+      const gioiHan = await this.gioiHanDonViService.getByMaKhaoSatAndMaDonVi(
+        maKhaoSat,
+        maDonVi,
+      );
+      if (
+        gioiHan &&
+        gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+      ) {
+        return false;
+      }
+    }
+
+    // 🔍 Kiểm tra giới hạn vùng miền
+    for (const maVung of vungMienIds) {
+      const gioiHan =
+        await this.gioiHanVungMienService.getByMaKhaoSatAndMaVungMien(
+          maKhaoSat,
+          maVung,
+        );
+      if (
+        gioiHan &&
+        gioiHan.so_luong_phan_hoi_hien_tai >= gioiHan.so_luong_phan_hoi_toi_da
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async checkGioiHanPhanHoi(
+    maKhaoSat: string,
+    maNguoiDung: string,
+  ): Promise<boolean> {
+    // Kiểm tra xem khảo sát còn đc phản hồi ko
+    const khaoSat = await this.khaoSatService.getKhaoSatById(maKhaoSat);
+    if (!khaoSat.trang_thai) return false;
+
+    // Kiểm tra xem đã đạt giới hạn phản hồi chưa
+    if (khaoSat.so_phan_hoi_hien_tai >= khaoSat.gioi_han_phan_hoi) return false;
+
+    // Kiểm tra xem người dùng đã vượt quá số lần phản hồi chưa
+    const countPhanHoi =
+      await this.phanHoiService.getSoPhanHoiTrongKhaoSatCuaNguoiDung(
+        maKhaoSat,
+        maNguoiDung,
+      );
+    if (countPhanHoi >= khaoSat.gioi_han_phan_hoi_moi_nguoi) return false;
+
+    return true;
+  }
 
   // async submitPhanHoi(
   //   maKhaoSat: string,

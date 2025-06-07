@@ -83,4 +83,29 @@ export class GioiHanVungMienService {
     ]);
     return { data, total };
   }
+
+  async getByMaKhaoSatAndMaVungMien(
+    maKhaoSat: string,
+    maVungMien: string,
+  ): Promise<GioiHanVungMien | null> {
+    const ans = await this.gioiHanVungMienModel.findOne({
+      ma_khao_sat: maKhaoSat,
+      ma_vung_mien: maVungMien,
+    });
+
+    return ans;
+  }
+
+  async tangSoPhanHoiHienTai(
+    maKhaoSat: string,
+    maVungMien: string,
+  ): Promise<void> {
+    await this.gioiHanVungMienModel.updateOne(
+      {
+        ma_khao_sat: maKhaoSat,
+        ma_vung_mien: maVungMien,
+      },
+      { $inc: { so_luong_phan_hoi_hien_tai: 1 } },
+    );
+  }
 }

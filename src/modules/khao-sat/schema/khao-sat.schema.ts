@@ -32,8 +32,11 @@ export class KhaoSat {
   @Prop({ required: true, default: false })
   cho_phep_tra_loi_nhieu_lan: boolean;
 
-  // @Prop({ required: true, default: false })
-  // cho_phep_an_danh: boolean;
+  @Prop()
+  gioi_han_phan_hoi_moi_nguoi: number;
+
+  @Prop({ required: true, default: false })
+  cho_phep_an_danh: boolean;
 
   @Prop({ default: true })
   trang_thai: boolean;
