@@ -1,6 +1,14 @@
 import { IsEmail, IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class UpdateNguoiDungDTO {
+  @IsString()
+  @IsOptional()
+  ten_dang_nhap?: string;
+
+  @IsString()
+  @IsOptional()
+  ten_nguoi_dung?: string;
+
   @IsEmail()
   @IsOptional()
   email?: string;

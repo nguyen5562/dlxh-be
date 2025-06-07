@@ -9,6 +9,7 @@ import { PhanHoiDTO } from './dto/phan-hoi.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
 import { NguoiDungPhanHoiDTO } from './dto/nguoi-dung-phan-hoi.dto';
 import { NguoiDungService } from '../nguoi-dung/nguoi-dung.service';
+import { NguoiDungDocument } from '../nguoi-dung/schema/nguoi-dung.schema';
 
 @Injectable()
 export class PhanHoiService {
@@ -99,12 +100,13 @@ export class PhanHoiService {
     const data = await Promise.all(
       phanHois.map(async (phanHoi) => {
         if (phanHoi.ma_nguoi_dung) {
-          const user = await this.nguoiDungService.getNguoiDungById(
+          const user = (await this.nguoiDungService.getNguoiDungById(
             phanHoi.ma_nguoi_dung.toString(),
-          );
+          )) as NguoiDungDocument;
           return {
-            ...user,
+            ...user.toObject(),
             ma_phan_hoi: phanHoi._id.toString(),
+            thoi_gian_phan_hoi: phanHoi.thoi_gian_phan_hoi.toString(),
           };
         }
         return {
@@ -117,6 +119,7 @@ export class PhanHoiService {
           sdt: '',
           ma_don_vi: new Types.ObjectId(),
           ma_phan_hoi: phanHoi._id.toString(),
+          thoi_gian_phan_hoi: phanHoi.thoi_gian_phan_hoi.toString(),
         };
       }),
     );

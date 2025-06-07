@@ -20,6 +20,7 @@ import { NguoiDungDTO } from './dto/nguoi-dung.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
 import { RegisterDTO } from './dto/resgiter.dto';
 import { DEFAULT_PASSWORD } from 'src/const/default.const';
+import { generateUniqueString } from 'src/utils/gen-string';
 
 @Injectable()
 export class NguoiDungService {
@@ -54,6 +55,11 @@ export class NguoiDungService {
     id: string,
     updateNguoiDungDto: UpdateNguoiDungDTO,
   ): Promise<NguoiDung> {
+    const checkUser = await this.nguoiDungModel.findOne({
+      ten_dang_nhap: updateNguoiDungDto.ten_dang_nhap,
+    });
+    if (checkUser) throw new BadRequestException('Tên đăng nhập đã tồn tại');
+
     const updated = await this.nguoiDungModel.findByIdAndUpdate(
       id,
       updateNguoiDungDto,
@@ -204,17 +210,12 @@ export class NguoiDungService {
   }
 
   async register(registerDto: RegisterDTO): Promise<NguoiDung> {
-    const checkUser = await this.nguoiDungModel.findOne({
-      ten_dang_nhap: registerDto.ten_nguoi_dung,
-    });
-    if (checkUser) throw new BadRequestException('Tên đăng nhập đã tồn tại');
-
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, salt);
     const newUser = await this.nguoiDungModel.create({
       ...registerDto,
       mat_khau: hashedPassword,
-      ten_dang_nhap: registerDto.ten_nguoi_dung,
+      ten_dang_nhap: generateUniqueString(),
     });
 
     return newUser;
