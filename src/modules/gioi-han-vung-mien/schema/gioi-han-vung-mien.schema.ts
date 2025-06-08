@@ -17,9 +17,6 @@ export class GioiHanVungMien {
 
   @Prop()
   so_luong_phan_hoi_toi_da: number;
-
-  @Prop({ default: 0 })
-  so_luong_phan_hoi_hien_tai: number;
 }
 
 export const GioiHanVungMienSchema =

@@ -4,6 +4,10 @@ import {
   GioiHanDonVi,
   GioiHanDonViDocument,
 } from './schema/gioi-han-don-vi.schema';
+import {
+  PhanHoiDonVi,
+  PhanHoiDonViDocument,
+} from './schema/phan-hoi-don-vi.schema';
 import { Model } from 'mongoose';
 import { CreateGioiHanDonViDTO } from './dto/create-gioi-han-don-vi.dto';
 import { UpdateGioiHanDonViDTO } from './dto/update-gioi-han-don-vi.dto';
@@ -14,6 +18,9 @@ export class GioiHanDonViService {
   constructor(
     @InjectModel(GioiHanDonVi.name)
     private readonly gioiHanDonViModel: Model<GioiHanDonViDocument>,
+
+    @InjectModel(PhanHoiDonVi.name)
+    private readonly phanHoiDonViModel: Model<PhanHoiDonViDocument>,
   ) {}
 
   async create(
@@ -81,13 +88,33 @@ export class GioiHanDonViService {
     return { data, total };
   }
 
-  async getByMaKhaoSatAndMaDonVi(
+  async getGioiHanByMaKhaoSatAndMaDonVi(
     maKhaoSat: string,
     maDonVi: string,
   ): Promise<GioiHanDonVi | null> {
     const ans = await this.gioiHanDonViModel.findOne({
       ma_khao_sat: maKhaoSat,
-      ma_vung_mien: maDonVi,
+      ma_don_vi: maDonVi,
+    });
+
+    return ans;
+  }
+
+  async getSoPhanHoiByMaKhaoSatAndMaDonVi(
+    maKhaoSat: string,
+    maDonVi: string,
+  ): Promise<PhanHoiDonVi | null> {
+    const ans = await this.phanHoiDonViModel.findOne({
+      ma_khao_sat: maKhaoSat,
+      ma_don_vi: maDonVi,
+    });
+
+    return ans;
+  }
+
+  async getSoPhanHoiByMaKhaoSat(maKhaoSat: string): Promise<PhanHoiDonVi[]> {
+    const ans = await this.phanHoiDonViModel.find({
+      ma_khao_sat: maKhaoSat,
     });
 
     return ans;
@@ -97,12 +124,13 @@ export class GioiHanDonViService {
     maKhaoSat: string,
     maDonVi: string,
   ): Promise<void> {
-    await this.gioiHanDonViModel.updateOne(
+    await this.phanHoiDonViModel.updateOne(
+      { ma_khao_sat: maKhaoSat, ma_don_vi: maDonVi },
       {
-        ma_khao_sat: maKhaoSat,
-        ma_don_vi: maDonVi,
+        $inc: { so_luong_phan_hoi_hien_tai: 1 },
+        $setOnInsert: { ma_khao_sat: maKhaoSat, ma_don_vi: maDonVi },
       },
-      { $inc: { so_luong_phan_hoi_hien_tai: 1 } },
+      { upsert: true },
     );
   }
 }

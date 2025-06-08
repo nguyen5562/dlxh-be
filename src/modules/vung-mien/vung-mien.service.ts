@@ -110,6 +110,10 @@ export class VungMienService {
     return { data, total };
   }
 
+  async getAll(): Promise<VungMien[]> {
+    return await this.vungMienModel.find();
+  }
+
   async getVungMienById(id: string): Promise<VungMien> {
     const vungMien = await this.vungMienModel
       .findById(id)

@@ -6,12 +6,17 @@ import {
   GioiHanDonVi,
   GioiHanDonViSchema,
 } from './schema/gioi-han-don-vi.schema';
+import {
+  PhanHoiDonVi,
+  PhanHoiDonViSchema,
+} from './schema/phan-hoi-don-vi.schema';
 import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: GioiHanDonVi.name, schema: GioiHanDonViSchema },
+      { name: PhanHoiDonVi.name, schema: PhanHoiDonViSchema },
     ]),
     forwardRef(() => NguoiDungModule),
   ],

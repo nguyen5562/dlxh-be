@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DapAn, DapAnSchema } from './schema/dap-an.schema';
 import { DapAnController } from './dap-an.controller';
@@ -8,7 +8,7 @@ import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: DapAn.name, schema: DapAnSchema }]),
-    NguoiDungModule,
+    forwardRef(() => NguoiDungModule),
   ],
   controllers: [DapAnController],
   providers: [DapAnService],

@@ -120,6 +120,10 @@ export class DonViService {
     return { data, total };
   }
 
+  async getAll(): Promise<DonVi[]> {
+    return await this.donViModel.find();
+  }
+
   async getDonViById(id: string): Promise<DonVi> {
     const donVi = await this.donViModel
       .findById(id)

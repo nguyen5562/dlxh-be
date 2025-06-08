@@ -179,4 +179,9 @@ export class PhanHoiService {
       }),
     );
   }
+
+  async getPhanHoiByMaKhaoSat(maKhaoSat: string): Promise<PhanHoi[]> {
+    const ans = await this.phanHoiModel.find({ ma_khao_sat: maKhaoSat });
+    return ans;
+  }
 }
