@@ -46,7 +46,7 @@ export class ThongKeService {
         _id: dv._id.toString(),
         ten_don_vi: dv.ten_don_vi,
         so_phan_hoi: mapPhanHoi.get(dv._id.toString()) || 0, // nếu không có thì gán 0
-        ma_don_vi_cha: dv.ma_don_vi_cha.toString(),
+        ma_don_vi_cha: dv.ma_don_vi_cha ? dv.ma_don_vi_cha.toString() : null,
         cac_don_vi_con: [],
       });
     }
@@ -91,7 +91,9 @@ export class ThongKeService {
         _id: vm._id.toString(),
         ten_vung_mien: vm.ten_vung_mien,
         so_phan_hoi: mapPhanHoi.get(vm._id.toString()) || 0, // nếu không có thì gán 0
-        ma_vung_mien_cha: vm.ma_vung_mien_cha.toString(),
+        ma_vung_mien_cha: vm.ma_vung_mien_cha
+          ? vm.ma_vung_mien_cha.toString()
+          : null,
         cac_vung_mien_con: [],
       });
     }

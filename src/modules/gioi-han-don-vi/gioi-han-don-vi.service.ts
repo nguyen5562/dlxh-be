@@ -80,7 +80,7 @@ export class GioiHanDonViService {
   ): Promise<{ data: GioiHanDonVi[]; total: number }> {
     const [data, total] = await Promise.all([
       this.gioiHanDonViModel
-        .find({ maKhaoSat: maKhaoSat })
+        .find({ ma_khao_sat: maKhaoSat })
         .limit(pagination.limit)
         .skip(pagination.skip),
       this.gioiHanDonViModel.countDocuments({ maKhaoSat: maKhaoSat }),

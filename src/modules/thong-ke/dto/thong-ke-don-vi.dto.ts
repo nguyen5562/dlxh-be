@@ -12,7 +12,7 @@ export class ThongKeDonViDTO {
   so_phan_hoi: number;
 
   @IsString()
-  ma_don_vi_cha: string;
+  ma_don_vi_cha: string | null;
 
   @ValidateNested({ each: true })
   @Type(() => ThongKeDonViDTO)

@@ -1,4 +1,4 @@
-import { Controller, Get, Response } from '@nestjs/common';
+import { Body, Controller, Get, Query, Response } from '@nestjs/common';
 import { ThongKeService } from './thong-ke.service';
 import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
@@ -8,8 +8,12 @@ export class ThongKeController {
   constructor(private readonly thongKeService: ThongKeService) {}
 
   @Get('don-vi')
-  async thongKeByDonVi(@Response() res, maKhaoSat: string) {
-    const ans = await this.thongKeService.thongKeSoPhanHoiTheoDonVi(maKhaoSat);
+  async thongKeByDonVi(
+    @Response() res,
+    @Query('ma_khao_sat') ma_khao_sat: string,
+  ) {
+    const ans =
+      await this.thongKeService.thongKeSoPhanHoiTheoDonVi(ma_khao_sat);
 
     return ApiResponse(
       res,
@@ -20,9 +24,12 @@ export class ThongKeController {
   }
 
   @Get('vung-mien')
-  async thongKeByVungMien(@Response() res, maKhaoSat: string) {
+  async thongKeByVungMien(
+    @Response() res,
+    @Query('ma_khao_sat') ma_khao_sat: string,
+  ) {
     const ans =
-      await this.thongKeService.thongKeSoPhanHoiTheoVungMien(maKhaoSat);
+      await this.thongKeService.thongKeSoPhanHoiTheoVungMien(ma_khao_sat);
 
     return ApiResponse(
       res,
@@ -33,9 +40,12 @@ export class ThongKeController {
   }
 
   @Get('gioi-tinh')
-  async thongKeByGioiTinh(@Response() res, maKhaoSat: string) {
+  async thongKeByGioiTinh(
+    @Response() res,
+    @Query('ma_khao_sat') ma_khao_sat: string,
+  ) {
     const ans =
-      await this.thongKeService.thongKeSoPhanHoiTheoGioiTinh(maKhaoSat);
+      await this.thongKeService.thongKeSoPhanHoiTheoGioiTinh(ma_khao_sat);
 
     return ApiResponse(
       res,

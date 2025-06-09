@@ -1,4 +1,12 @@
-import { Controller, Get, Request, Response, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Query,
+  Request,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Post } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
@@ -48,9 +56,13 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('check-can-response')
-  async checkCanResponse(@Request() req, @Response() res, maKhaoSat: string) {
+  async checkCanResponse(
+    @Request() req,
+    @Response() res,
+    @Query('ma_khao_sat') ma_khao_sat: string,
+  ) {
     const userId: string = req.user.userId;
-    const ans = await this.authService.checkCanResponse(userId, maKhaoSat);
+    const ans = await this.authService.checkCanResponse(userId, ma_khao_sat);
 
     if (!ans)
       return ApiResponse(
