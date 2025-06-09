@@ -25,13 +25,12 @@ import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 
-@UseGuards(PermissionsGuard)
 @Controller('don-vi')
 export class DonViController {
   constructor(private readonly donViService: DonViService) {}
 
-  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  // @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
   async getAllDonVis(
     @Response() res,
@@ -54,14 +53,15 @@ export class DonViController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyDonVi)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  // @ModulePermission(ChucNangHeThong.QuanLyDonVi)
+  // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get(':id')
   async getDonViById(@Param('id') id: string, @Response() res) {
     const ans = await this.donViService.getDonViById(id);
     return ApiResponse(res, ResponseCode.SUCCESS, 'Lấy đơn vị thành công', ans);
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyDonVi)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -73,6 +73,7 @@ export class DonViController {
     return ApiResponse(res, ResponseCode.CREATED, 'Tạo đơn vị thành công', ans);
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyDonVi)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -90,6 +91,7 @@ export class DonViController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyDonVi)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
