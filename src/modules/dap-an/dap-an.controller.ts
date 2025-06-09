@@ -20,6 +20,7 @@ import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @Controller('dap-an')
 export class DapAnController {
@@ -39,7 +40,7 @@ export class DapAnController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getDapAnById(@Param('id') id: string, @Response() res) {
     const dapAn = await this.dapAnService.getDapAnById(id);
@@ -51,7 +52,7 @@ export class DapAnController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('by-cau-hoi/:id')
   async getDapAnByCauHoiId(@Param('id') id: string, @Response() res) {
     const dapAn = await this.dapAnService.getDapAnByCauHoiId(id);

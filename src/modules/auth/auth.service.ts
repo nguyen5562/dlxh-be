@@ -36,4 +36,20 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async checkCanResponse(
+    maNguoiDung: string,
+    maKhaoSat: string,
+  ): Promise<boolean> {
+    const checkVungMienDonVi =
+      await this.nguoiDungService.checkVungMienAndDonVi(maKhaoSat, maNguoiDung);
+
+    const checkGioiHan = await this.nguoiDungService.checkGioiHanPhanHoi(
+      maKhaoSat,
+      maNguoiDung,
+    );
+
+    if (checkVungMienDonVi && checkGioiHan) return true;
+    else return false;
+  }
 }

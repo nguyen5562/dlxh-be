@@ -306,13 +306,13 @@ export class NguoiDungService {
           maKhaoSat,
           maDonVi,
         );
-      if (
-        gioiHan &&
+
+      if (!gioiHan) return false;
+      else if (
         (hienTai?.so_luong_phan_hoi_hien_tai ?? 0) >=
-          gioiHan.so_luong_phan_hoi_toi_da
-      ) {
+        gioiHan.so_luong_phan_hoi_toi_da
+      )
         return false;
-      }
     }
 
     // 🔍 Kiểm tra giới hạn vùng miền
@@ -327,13 +327,13 @@ export class NguoiDungService {
           maKhaoSat,
           maVung,
         );
-      if (
-        gioiHan &&
+
+      if (!gioiHan) return false;
+      else if (
         (hienTai?.so_luong_phan_hoi_hien_tai ?? 0) >=
-          gioiHan.so_luong_phan_hoi_toi_da
-      ) {
+        gioiHan.so_luong_phan_hoi_toi_da
+      )
         return false;
-      }
     }
 
     return true;

@@ -20,6 +20,7 @@ import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @Controller('cau-hoi')
 export class CauHoiController {
@@ -39,7 +40,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getCauHoiById(@Param('id') id: string, @Response() res) {
     const cauHoi = await this.cauHoiService.getCauHoiById(id);
@@ -95,7 +96,7 @@ export class CauHoiController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa câu hỏi thành công');
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getCauHoiChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.cauHoiService.getCauHoiChiTiet(id);
@@ -107,7 +108,7 @@ export class CauHoiController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('by-phan-khao-sat/:id')
   async getCauHoiByPhanKhaoSatId(@Param('id') id: string, @Response() res) {
     const ans = await this.cauHoiService.getCauHoiByPhanKhaoSatId(id);

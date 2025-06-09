@@ -45,4 +45,26 @@ export class AuthController {
     const ans = req.user.userId;
     return ApiResponse(res, ResponseCode.SUCCESS, 'Lấy id thành công', ans);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('check-can-response')
+  async checkCanResponse(@Request() req, @Response() res, maKhaoSat: string) {
+    const userId: string = req.user.userId;
+    const ans = await this.authService.checkCanResponse(userId, maKhaoSat);
+
+    if (!ans)
+      return ApiResponse(
+        res,
+        ResponseCode.BAD_REQUEST,
+        'Bạn không được quyền phản hồi khảo sát này',
+        ans,
+      );
+    else
+      return ApiResponse(
+        res,
+        ResponseCode.SUCCESS,
+        'Bạn được quyền phản hồi khảo sát này',
+        ans,
+      );
+  }
 }
