@@ -82,7 +82,8 @@ export class GioiHanDonViService {
       this.gioiHanDonViModel
         .find({ ma_khao_sat: maKhaoSat })
         .limit(pagination.limit)
-        .skip(pagination.skip),
+        .skip(pagination.skip)
+        .populate('ma_don_vi', '_id ten_don_vi'),
       this.gioiHanDonViModel.countDocuments({ maKhaoSat: maKhaoSat }),
     ]);
     return { data, total };

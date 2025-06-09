@@ -85,7 +85,8 @@ export class GioiHanVungMienService {
       this.gioiHanVungMienModel
         .find({ ma_khao_sat: maKhaoSat })
         .limit(pagination.limit)
-        .skip(pagination.skip),
+        .skip(pagination.skip)
+        .populate('ma_vung_mien', '_id ten_vung_mien'),
       this.gioiHanVungMienModel.countDocuments({ ma_khao_sat: maKhaoSat }),
     ]);
     return { data, total };
