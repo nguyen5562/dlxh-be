@@ -125,10 +125,9 @@ export class DonViService {
   }
 
   async getDonViById(id: string): Promise<DonVi> {
-    const donVi = await this.donViModel
-      .findById(id)
-      .populate('ma_don_vi_cha', '_id ten_don_vi')
-      .populate('ma_vung_mien', '_id ten_vung_mien');
+    const donVi = await this.donViModel.findById(id);
+    // .populate('ma_don_vi_cha', '_id ten_don_vi')
+    // .populate('ma_vung_mien', '_id ten_vung_mien');
     if (!donVi) throw new NotFoundException('Đơn vị không tồn tại');
     return donVi;
   }

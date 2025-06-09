@@ -115,9 +115,8 @@ export class VungMienService {
   }
 
   async getVungMienById(id: string): Promise<VungMien> {
-    const vungMien = await this.vungMienModel
-      .findById(id)
-      .populate('ma_vung_mien_cha', '_id ten_vung_mien');
+    const vungMien = await this.vungMienModel.findById(id);
+    // .populate('ma_vung_mien_cha', '_id ten_vung_mien');
     if (!vungMien) throw new NotFoundException('Vùng miền không tồn tại');
     return vungMien;
   }

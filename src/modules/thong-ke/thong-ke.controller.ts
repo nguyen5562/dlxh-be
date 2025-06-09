@@ -1,7 +1,7 @@
 import { Controller, Get, Response } from '@nestjs/common';
 import { ThongKeService } from './thong-ke.service';
-import { ApiResponse } from 'src/helper/response.helper';
-import { ResponseCode } from 'src/const/response.const';
+import { ApiResponse } from '../../helper/response.helper';
+import { ResponseCode } from '../../const/response.const';
 
 @Controller('thong-ke')
 export class ThongKeController {

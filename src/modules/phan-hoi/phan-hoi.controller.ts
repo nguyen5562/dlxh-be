@@ -23,7 +23,7 @@ import { PermissionsGuard } from '../../guards/permissions.guard';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @Controller('phan-hoi')
 export class PhanHoiController {

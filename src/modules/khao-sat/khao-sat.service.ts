@@ -60,9 +60,8 @@ export class KhaoSatService {
   }
 
   async getKhaoSatById(id: string): Promise<KhaoSat> {
-    const khaoSat = await this.khaoSatModel
-      .findById(id)
-      .populate('ma_nguoi_tao', '_id ten_nguoi_dung');
+    const khaoSat = await this.khaoSatModel.findById(id);
+    // .populate('ma_nguoi_tao', '_id ten_nguoi_dung');
     if (!khaoSat) throw new NotFoundException(`Khảo sát không tồn tại`);
     return khaoSat;
   }

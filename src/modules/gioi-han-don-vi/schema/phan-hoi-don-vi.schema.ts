@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { DonVi } from 'src/modules/don-vi/schema/don-vi.schema';
-import { KhaoSat } from 'src/modules/khao-sat/schema/khao-sat.schema';
+import { DonVi } from '../../../modules/don-vi/schema/don-vi.schema';
+import { KhaoSat } from '../../../modules/khao-sat/schema/khao-sat.schema';
 
 export type PhanHoiDonViDocument = PhanHoiDonVi & Document;
 

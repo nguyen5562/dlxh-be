@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Sex } from 'src/const/gioi-tinh.const';
+import { Sex } from '../../../const/gioi-tinh.const';
 
 export class RegisterDTO {
   @IsString()
