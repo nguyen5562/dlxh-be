@@ -21,7 +21,6 @@ import {
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { PermissionsGuard } from '../../guards/permissions.guard';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 
@@ -68,7 +67,7 @@ export class PhanHoiController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   async createPhanHoi(
     @Body(ValidationPipe) createPhanHoiDto: CreatePhanHoiDTO,
@@ -92,7 +91,7 @@ export class PhanHoiController {
     return ApiResponse(res, ResponseCode.SUCCESS, 'Xóa phản hồi thành công');
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('detail')
   async createPhanHoiDetail(
     @Body(ValidationPipe) createPhanHoiDetailDto: CreatePhanHoiDetailDTO,

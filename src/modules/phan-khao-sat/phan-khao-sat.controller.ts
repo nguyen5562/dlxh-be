@@ -21,13 +21,14 @@ import { ModulePermission } from '../../decorators/module-action.decorator';
 import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @Controller('phan-khao-sat')
 export class PhanKhaoSatController {
   constructor(private readonly phanKhaoSatService: PhanKhaoSatService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(PermissionsGuard)
+  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
+  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
   async getAllPhanKhaoSat(@Response() res): Promise<PhanKhaoSat[]> {
     const ans = await this.phanKhaoSatService.getAllPhanKhaoSat();
@@ -39,7 +40,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getPhanKhaoSatById(
     @Param('id') id: string,
@@ -62,7 +63,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('by-khao-sat/:id')
   async getPhanKhaoSatByKhaoSatId(@Param('id') id: string, @Response() res) {
     const ans = await this.phanKhaoSatService.getPhanKhaoSatByKhaoSatId(id);
@@ -129,7 +130,7 @@ export class PhanKhaoSatController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('chi-tiet/:id')
   async getPhanKhaoSatChiTiet(@Param('id') id: string, @Response() res) {
     const ans = await this.phanKhaoSatService.getPhanKhaoSatChiTiet(id);

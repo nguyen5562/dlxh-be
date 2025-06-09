@@ -21,11 +21,11 @@ import { ActionsPermission } from '../../decorators/module-action.decorator';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 
-@UseGuards(PermissionsGuard)
 @Controller('dap-an')
 export class DapAnController {
   constructor(private dapAnService: DapAnService) {}
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   @Get()
@@ -39,8 +39,7 @@ export class DapAnController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getDapAnById(@Param('id') id: string, @Response() res) {
     const dapAn = await this.dapAnService.getDapAnById(id);
@@ -52,8 +51,7 @@ export class DapAnController {
     );
   }
 
-  @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
-  @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
+  // @UseGuards(JwtAuthGuard)
   @Get('by-cau-hoi/:id')
   async getDapAnByCauHoiId(@Param('id') id: string, @Response() res) {
     const dapAn = await this.dapAnService.getDapAnByCauHoiId(id);
@@ -65,6 +63,7 @@ export class DapAnController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Post()
@@ -81,6 +80,7 @@ export class DapAnController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Put(':id')
@@ -98,6 +98,7 @@ export class DapAnController {
     );
   }
 
+  @UseGuards(PermissionsGuard)
   @ModulePermission(ChucNangHeThong.QuanLyKhaoSat)
   @ActionsPermission([QuyenHeThong.Edit])
   @Delete(':id')
