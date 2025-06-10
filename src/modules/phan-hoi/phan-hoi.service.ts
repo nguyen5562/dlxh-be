@@ -119,7 +119,7 @@ export class PhanHoiService {
     const data = await Promise.all(
       phanHois.map(async (phanHoi) => {
         if (phanHoi.ma_nguoi_dung) {
-          const user = (await this.nguoiDungService.getNguoiDungById(
+          const user = (await this.nguoiDungService.getNguoiDungAndDonViById(
             phanHoi.ma_nguoi_dung.toString(),
           )) as NguoiDungDocument;
           return {

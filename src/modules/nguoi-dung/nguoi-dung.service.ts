@@ -136,6 +136,12 @@ export class NguoiDungService {
     return user;
   }
 
+  async getNguoiDungAndDonViById(id: string): Promise<NguoiDung> {
+    const user = await this.nguoiDungModel.findById(id).populate('ma_don_vi');
+    if (!user) throw new NotFoundException(`Không tìm thấy người dùng này`);
+    return user;
+  }
+
   async getNguoiDungAndVaiTroAndQuyensById(id: string): Promise<NguoiDungDTO> {
     const user = await this.nguoiDungModel.findById(id);
     if (!user) throw new NotFoundException(`User not found`);
