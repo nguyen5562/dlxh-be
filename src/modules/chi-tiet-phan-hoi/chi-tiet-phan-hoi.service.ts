@@ -51,4 +51,12 @@ export class ChiTietPhanHoiService {
       throw new NotFoundException('Chi tiết phản hồi không tồn tại');
     return chiTietPhanHoi;
   }
+
+  async getChiTietPhanHoiByCauHoiId(
+    cauHoiId: string,
+  ): Promise<ChiTietPhanHoi[]> {
+    return await this.chiTietPhanHoiModel.find({
+      ma_cau_hoi: cauHoiId,
+    });
+  }
 }

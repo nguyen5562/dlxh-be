@@ -54,4 +54,19 @@ export class ThongKeController {
       ans,
     );
   }
+
+  @Get('cau-hoi')
+  async thongKeByCauHoi(
+    @Response() res,
+    @Query('ma_cau_hoi') ma_cau_hoi: string,
+  ) {
+    const ans = await this.thongKeService.thongKeTheoCauHoi(ma_cau_hoi);
+
+    return ApiResponse(
+      res,
+      ResponseCode.SUCCESS,
+      'Thống kê theo câu hỏi thành công',
+      ans,
+    );
+  }
 }

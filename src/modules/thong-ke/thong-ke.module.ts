@@ -7,6 +7,9 @@ import { VungMienModule } from '../vung-mien/vung-mien.module';
 import { GioiHanVungMienModule } from '../gioi-han-vung-mien/gioi-han-vung-mien.module';
 import { PhanHoiModule } from '../phan-hoi/phan-hoi.module';
 import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
+import { CauHoiModule } from '../cau-hoi/cau-hoi.module';
+import { DapAnModule } from '../dap-an/dap-an.module';
+import { ChiTietPhanHoiModule } from '../chi-tiet-phan-hoi/chi-tiet-phan-hoi.module';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { NguoiDungModule } from '../nguoi-dung/nguoi-dung.module';
     GioiHanVungMienModule,
     PhanHoiModule,
     NguoiDungModule,
+    CauHoiModule,
+    DapAnModule,
+    ChiTietPhanHoiModule,
   ],
   controllers: [ThongKeController],
   providers: [ThongKeService],
