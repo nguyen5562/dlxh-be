@@ -5,6 +5,7 @@ import { VungMien, VungMienDocument } from './schema/vung-mien.schema';
 import { CreateVungMienDTO } from './dto/create-vung-mien.dto';
 import { UpdateVungMienDTO } from './dto/update-vung-mien.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class VungMienService {
@@ -96,11 +97,18 @@ export class VungMienService {
   }
 
   async getAllVungMiens(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: VungMien[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          ten_vung_mien: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+
     const [data, total] = await Promise.all([
       this.vungMienModel
-        .find()
+        .find(search)
         .skip(pagination.skip)
         .limit(pagination.limit)
         .populate('ma_vung_mien_cha', '_id ten_vung_mien'),

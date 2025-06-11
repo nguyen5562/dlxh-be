@@ -28,6 +28,8 @@ import { PaginationType } from '../../middleware/pagination.middleware';
 import { RegisterDTO } from './dto/resgiter.dto';
 import { JwtService } from '@nestjs/jwt';
 import { DEFAULT_PASSWORD } from '../../const/default.const';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Controller('nguoi-dung')
 export class NguoiDungController {
@@ -43,9 +45,13 @@ export class NguoiDungController {
   async getAllNguoiDungs(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } =
-      await this.nguoiDungService.getAllNguoiDungs(pagination);
+    const { data, total } = await this.nguoiDungService.getAllNguoiDungs(
+      filter,
+      pagination,
+    );
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
@@ -62,7 +68,7 @@ export class NguoiDungController {
     );
   }
 
-  @UseGuards(PermissionsGuard)
+  // @UseGuards(PermissionsGuard)
   // @ModulePermission(ChucNangHeThong.QuanLyNguoiDung)
   // @ActionsPermission([QuyenHeThong.View, QuyenHeThong.Edit])
   // @Get('chi-tiet')

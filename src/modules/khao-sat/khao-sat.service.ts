@@ -7,6 +7,7 @@ import { UpdateKhaoSatDTO } from './dto/update-khao-sat.dto';
 import { PhanKhaoSatService } from '../phan-khao-sat/phan-khao-sat.service';
 import { KhaoSatDTO } from './dto/khao-sat.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class KhaoSatService {
@@ -45,11 +46,18 @@ export class KhaoSatService {
   }
 
   async getAllKhaoSat(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: KhaoSat[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          tieu_de: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+
     const [data, total] = await Promise.all([
       this.khaoSatModel
-        .find()
+        .find(search)
         .skip(pagination.skip)
         .limit(pagination.limit)
         .populate('ma_nguoi_tao', '_id ten_nguoi_dung'),

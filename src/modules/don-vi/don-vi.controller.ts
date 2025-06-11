@@ -24,6 +24,8 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Controller('don-vi')
 export class DonViController {
@@ -35,8 +37,12 @@ export class DonViController {
   async getAllDonVis(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } = await this.donViService.getAllDonVis(pagination);
+    const { data, total } = await this.donViService.getAllDonVis(
+      filter,
+      pagination,
+    );
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,

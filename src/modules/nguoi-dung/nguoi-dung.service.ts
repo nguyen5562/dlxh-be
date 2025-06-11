@@ -27,6 +27,7 @@ import { GioiHanDonViService } from '../gioi-han-don-vi/gioi-han-don-vi.service'
 import { GioiHanVungMienService } from '../gioi-han-vung-mien/gioi-han-vung-mien.service';
 import { KhaoSatService } from '../khao-sat/khao-sat.service';
 import { PhanHoiService } from '../phan-hoi/phan-hoi.service';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class NguoiDungService {
@@ -102,10 +103,20 @@ export class NguoiDungService {
   }
 
   async getAllNguoiDungs(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: NguoiDung[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          ten_nguoi_dung: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+    
     const [data, total] = await Promise.all([
-      this.nguoiDungModel.find().skip(pagination.skip).limit(pagination.limit),
+      this.nguoiDungModel
+        .find(search)
+        .skip(pagination.skip)
+        .limit(pagination.limit),
       this.nguoiDungModel.countDocuments(),
     ]);
 

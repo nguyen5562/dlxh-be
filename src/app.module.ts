@@ -21,6 +21,7 @@ import { PaginationMiddleware } from './middleware/pagination.middleware';
 import { GioiHanDonViModule } from './modules/gioi-han-don-vi/gioi-han-don-vi.module';
 import { GioiHanVungMienModule } from './modules/gioi-han-vung-mien/gioi-han-vung-mien.module';
 import { ThongKeModule } from './modules/thong-ke/thong-ke.module';
+import { FilterMiddleware } from './middleware/filter.middleware';
 
 @Module({
   imports: [
@@ -52,5 +53,6 @@ import { ThongKeModule } from './modules/thong-ke/thong-ke.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(PaginationMiddleware).forRoutes('*');
+    consumer.apply(FilterMiddleware).forRoutes('*');
   }
 }

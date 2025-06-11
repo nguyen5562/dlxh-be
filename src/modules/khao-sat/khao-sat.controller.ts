@@ -23,6 +23,8 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Controller('khao-sat')
 export class KhaoSatController {
@@ -35,8 +37,13 @@ export class KhaoSatController {
   async getAllKhaoSat(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } = await this.khaoSatService.getAllKhaoSat(pagination);
+    const { data, total } = await this.khaoSatService.getAllKhaoSat(
+      filter,
+      pagination,
+    );
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,

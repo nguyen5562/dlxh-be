@@ -6,6 +6,7 @@ import { CreateDonViDTO } from './dto/create-don-vi.dto';
 import { UpdateDonViDTO } from './dto/update-don-vi.dto';
 import { VungMienService } from '../vung-mien/vung-mien.service';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class DonViService {
@@ -105,11 +106,18 @@ export class DonViService {
   }
 
   async getAllDonVis(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: DonVi[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          ten_don_vi: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+
     const [data, total] = await Promise.all([
       this.donViModel
-        .find()
+        .find(search)
         .limit(pagination.limit)
         .skip(pagination.skip)
         .populate('ma_don_vi_cha', '_id ten_don_vi')

@@ -15,6 +15,7 @@ import { AddQuyenToVaiTroDTO } from './dto/add-quyen-to-vai-tro.dto';
 import { Quyen } from '../quyen/schema/quyen.schema';
 import { RemoveQuyenFromVaiTroDTO } from './dto/remove-quyen-from-vai-tro.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class VaiTroService {
@@ -61,10 +62,20 @@ export class VaiTroService {
   }
 
   async getAllVaiTros(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: VaiTro[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          ten_vai_tro: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+
     const [data, total] = await Promise.all([
-      this.vaiTroModel.find().skip(pagination.skip).limit(pagination.limit),
+      this.vaiTroModel
+        .find(search)
+        .skip(pagination.skip)
+        .limit(pagination.limit),
       this.vaiTroModel.countDocuments(),
     ]);
     return { data, total };

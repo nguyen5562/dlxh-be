@@ -26,6 +26,8 @@ import { ResponseCode } from '../../const/response.const';
 import { ApiResponse } from '../../helper/response.helper';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('vai-tro')
@@ -38,8 +40,13 @@ export class VaiTroController {
   async getAllVaiTros(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } = await this.vaiTroService.getAllVaiTros(pagination);
+    const { data, total } = await this.vaiTroService.getAllVaiTros(
+      filter,
+      pagination,
+    );
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,

@@ -24,6 +24,8 @@ import { ChucNangHeThong } from '../../enums/chuc-nang-he-thong.enum';
 import { QuyenHeThong } from '../../enums/quyen-he-thong.enum';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('vung-mien')
@@ -36,9 +38,13 @@ export class VungMienController {
   async getAllVungMiens(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } =
-      await this.vungMienService.getAllVungMiens(pagination);
+    const { data, total } = await this.vungMienService.getAllVungMiens(
+      filter,
+      pagination,
+    );
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,

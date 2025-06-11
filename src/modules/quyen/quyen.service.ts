@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { CreateQuyenDTO } from './dto/create-quyen.dto';
 import { UpdateQuyenDTO } from './dto/update-quyen.dto';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @Injectable()
 export class QuyenService {
@@ -39,10 +40,20 @@ export class QuyenService {
   }
 
   async findAllQuyens(
+    filter: FilterType,
     pagination: PaginationType,
   ): Promise<{ data: Quyen[]; total: number }> {
+    const search = filter.text_search
+      ? {
+          chuc_nang: { $regex: filter.text_search, $options: 'i' },
+        }
+      : {};
+
     const [data, total] = await Promise.all([
-      this.quyenModel.find().limit(pagination.limit).skip(pagination.skip),
+      this.quyenModel
+        .find(search)
+        .limit(pagination.limit)
+        .skip(pagination.skip),
       this.quyenModel.countDocuments(),
     ]);
     return { data, total };

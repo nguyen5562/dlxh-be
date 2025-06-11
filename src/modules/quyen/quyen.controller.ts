@@ -24,6 +24,8 @@ import { ApiResponse } from '../../helper/response.helper';
 import { ResponseCode } from '../../const/response.const';
 import { Pagination } from '../../decorators/pagination.decorator';
 import { PaginationType } from '../../middleware/pagination.middleware';
+import { Filter } from 'src/decorators/filter.pagination';
+import { FilterType } from 'src/middleware/filter.middleware';
 
 @UseGuards(PermissionsGuard)
 @Controller('quyen')
@@ -36,8 +38,13 @@ export class QuyenController {
   async getAllQuyens(
     @Response() res,
     @Pagination() pagination: PaginationType,
+    @Filter() filter: FilterType,
   ) {
-    const { data, total } = await this.quyenService.findAllQuyens(pagination);
+    const { data, total } = await this.quyenService.findAllQuyens(
+      filter,
+      pagination,
+    );
+
     return ApiResponse(
       res,
       ResponseCode.SUCCESS,
